@@ -10,28 +10,45 @@ export const useImperativeHandleData = {
   icon: MoreHorizontal,
   title: "useImperativeHandle",
   category: "advanced",
-  description: "Customize the instance value exposed to parent refs",
+  description: "Customize exposed ref values",
   component: UseImperativeHandleDemo,
   theory: {
     overview:
-      "Customizes the instance value that is exposed to parent components when using `forwardRef`.",
-    deepDive:
-      "Usually, you don't want to expose the *entire* DOM node to a parent (encapsulation). This hook lets you return a custom object with only specific methods (like `focus()` or `reset()`) instead of the raw DOM node.",
-    whenToUse: [
-      "When you need to imperatively trigger functions in a child (e.g. `modalRef.current.open()`)",
-      "Library authors designing strict APIs",
-    ],
+      "Allows you to customize the instance value that is exposed to parent components when using `forwardRef`. Instead of exposing the entire DOM node, you expose a limited set of methods.",
+    definition:
+      "useImperativeHandle is a React Hook that lets you customize the handle exposed as a ref.",
     syntax: `useImperativeHandle(ref, () => ({
   focus: () => {
     inputRef.current.focus();
+  },
+  scroll: () => {
+    inputRef.current.scrollIntoView();
   }
 }));`,
-    tips: [
-      "Avoid using refs for data flow; prefer props",
-      "Must be used with `forwardRef`",
+    realLifeScenario:
+      "A video player component. You want the parent to control it (`play()`, `pause()`), but you don't want the parent to access the raw `<video>` tag and mess with other properties. `useImperativeHandle` lets you expose just `{ play, pause }`.",
+    pros: [
+      "Encapsulation: Hides internal DOM structure.",
+      "Control: Exposes a clean, limited API.",
     ],
+    cons: [
+      "Encourages imperative code over declarative data flow.",
+      "Makes components harder to predict.",
+    ],
+    whenToUse: [
+      "Exposing parent-callable functions (play, pause, focus)",
+      "Hiding internal DOM node implementation details",
+      "Integrating with imperative libraries",
+    ],
+    tips: [
+      "Use sparingly; prefer props for data flow",
+      "Must be used with forwardRef",
+    ],
+    deepDive:
+      "It essentially creates a bridge. The parent gets an object you defined, rather than the actual child instance or DOM node.",
     commonPitfalls: [
-      "Overusing imperative code in a declarative library (React)",
+      "Forgetting forwardRef wrapper",
+      "Overusing it instead of lifting state up",
     ],
   },
 };

@@ -125,23 +125,23 @@ const TopicLayout = ({ title, sections, basePath }) => {
 
                         {(viewMode === 'theory' || viewMode === 'split') && (
                             <div className="p-6 space-y-6 overflow-auto max-h-[800px] bg-white">
+                                {/* 1. Overview */}
                                 <div>
                                     <h3 className="text-lg font-bold text-gray-900 mb-2 border-b pb-2">📖 Overview</h3>
                                     <p className="text-gray-700 leading-relaxed">{activeContent.theory.overview}</p>
                                 </div>
 
-                                <div>
-                                    <h3 className="text-lg font-bold text-gray-900 mb-2 border-b pb-2">✅ When to Use</h3>
-                                    <ul className="space-y-2">
-                                        {activeContent.theory.whenToUse.map((item, idx) => (
-                                            <li key={idx} className="text-gray-700 flex gap-3 items-start">
-                                                <span className="text-indigo-600 font-bold mt-1">•</span>
-                                                <span>{item}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
+                                {/* 2. Definition */}
+                                {activeContent.theory.definition && (
+                                    <div>
+                                        <h3 className="text-lg font-bold text-gray-900 mb-2 border-b pb-2">📚 Definition</h3>
+                                        <div className="bg-indigo-50 border-l-4 border-indigo-500 p-4 text-indigo-900 rounded-r">
+                                            {activeContent.theory.definition}
+                                        </div>
+                                    </div>
+                                )}
 
+                                {/* 3. Syntax */}
                                 <div>
                                     <h3 className="text-lg font-bold text-gray-900 mb-2 border-b pb-2">💻 Syntax</h3>
                                     <pre className="bg-slate-900 text-slate-50 p-4 rounded-lg text-sm overflow-x-auto font-mono custom-scrollbar border border-slate-700">
@@ -149,42 +149,108 @@ const TopicLayout = ({ title, sections, basePath }) => {
                                     </pre>
                                 </div>
 
-                                <div>
-                                    <h3 className="text-lg font-bold text-gray-900 mb-2 border-b pb-2">💡 Pro Tips</h3>
-                                    <ul className="space-y-2">
-                                        {activeContent.theory.tips.map((tip, idx) => (
-                                            <li key={idx} className="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-r text-gray-800 text-sm flex gap-3">
-                                                <span className="text-yellow-600 font-bold">★</span>
-                                                <span>{tip}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-
-
-                                {activeContent.theory.deepDive && (
+                                {/* 4. Real-life Scenario */}
+                                {activeContent.theory.realLifeScenario && (
                                     <div>
-                                        <h3 className="text-lg font-bold text-gray-900 mb-2 border-b pb-2">🔬 Deep Dive</h3>
-                                        <div className="text-gray-700 text-sm leading-relaxed bg-blue-50 p-4 rounded-lg border border-blue-100">
-                                            {activeContent.theory.deepDive}
+                                        <h3 className="text-lg font-bold text-gray-900 mb-2 border-b pb-2">🌍 Real-life Scenario</h3>
+                                        <div className="bg-green-50 border border-green-200 p-4 rounded-lg text-gray-700 leading-relaxed">
+                                            {activeContent.theory.realLifeScenario}
                                         </div>
                                     </div>
                                 )}
 
-
-                                {activeContent.theory.commonPitfalls && (
-                                    <div>
-                                        <h3 className="text-lg font-bold text-red-900 mb-2 border-b pb-2">⚠️ Common Pitfalls</h3>
-                                        <ul className="space-y-2">
-                                            {activeContent.theory.commonPitfalls.map((pitfall, idx) => (
-                                                <li key={idx} className="bg-red-50 border-l-4 border-red-400 p-3 rounded-r text-gray-800 text-sm flex gap-3">
-                                                    <span className="text-red-600 font-bold">!</span>
-                                                    <span>{pitfall}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
+                                {/* 5. Pros and Cons */}
+                                {(activeContent.theory.pros || activeContent.theory.cons) && (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {activeContent.theory.pros && (
+                                            <div className="bg-green-50/50 p-4 rounded-lg border border-green-100">
+                                                <h4 className="text-green-800 font-bold mb-2 flex items-center gap-2">
+                                                    👍 Pros
+                                                </h4>
+                                                <ul className="space-y-1">
+                                                    {activeContent.theory.pros.map((pro, idx) => (
+                                                        <li key={idx} className="text-sm text-gray-700 flex gap-2">
+                                                            <span className="text-green-600">•</span>
+                                                            {pro}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
+                                        {activeContent.theory.cons && (
+                                            <div className="bg-red-50/50 p-4 rounded-lg border border-red-100">
+                                                <h4 className="text-red-800 font-bold mb-2 flex items-center gap-2">
+                                                    👎 Cons
+                                                </h4>
+                                                <ul className="space-y-1">
+                                                    {activeContent.theory.cons.map((con, idx) => (
+                                                        <li key={idx} className="text-sm text-gray-700 flex gap-2">
+                                                            <span className="text-red-600">•</span>
+                                                            {con}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
+
+                                {/* 6. Others / Details */}
+                                <div>
+                                    <h3 className="text-lg font-bold text-gray-900 mb-4 border-b pb-2">🔍 details & Tips</h3>
+
+                                    {/* When to Use (Merged into Details if not replaced by Scenario) */}
+                                    {activeContent.theory.whenToUse && (
+                                        <div className="mb-6">
+                                            <h4 className="text-gray-800 font-semibold mb-2">When to Use:</h4>
+                                            <ul className="space-y-2">
+                                                {activeContent.theory.whenToUse.map((item, idx) => (
+                                                    <li key={idx} className="text-gray-700 flex gap-2 items-start">
+                                                        <span className="text-indigo-600 mt-1">•</span>
+                                                        <span>{item}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+
+                                    {/* Tips */}
+                                    {activeContent.theory.tips && (
+                                        <div className="space-y-2 mb-6">
+                                            {activeContent.theory.tips.map((tip, idx) => (
+                                                <div key={idx} className="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-r text-gray-800 text-sm flex gap-3">
+                                                    <span className="text-yellow-600 font-bold">★</span>
+                                                    <span>{tip}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    {/* Deep Dive */}
+                                    {activeContent.theory.deepDive && (
+                                        <div className="mb-6">
+                                            <h4 className="text-gray-800 font-semibold mb-2">Deep Dive:</h4>
+                                            <div className="text-gray-700 text-sm leading-relaxed bg-blue-50 p-4 rounded-lg border border-blue-100">
+                                                {activeContent.theory.deepDive}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Pitfalls */}
+                                    {activeContent.theory.commonPitfalls && (
+                                        <div>
+                                            <h4 className="text-gray-800 font-semibold mb-2">Common Pitfalls:</h4>
+                                            <ul className="space-y-2">
+                                                {activeContent.theory.commonPitfalls.map((pitfall, idx) => (
+                                                    <li key={idx} className="bg-red-50 border-l-4 border-red-400 p-3 rounded-r text-gray-800 text-sm flex gap-3">
+                                                        <span className="text-red-600 font-bold">!</span>
+                                                        <span>{pitfall}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         )}
 

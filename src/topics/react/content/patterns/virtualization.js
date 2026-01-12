@@ -8,30 +8,50 @@ const VirtualizationDemo = lazy(() =>
 export const virtualizationData = {
   id: "virtualization",
   icon: Layers,
-  title: "List Virtualization",
+  title: "Virtualization",
   category: "patterns",
-  description: "Render only visible items in large lists",
+  description: "Render large lists efficiently",
   component: VirtualizationDemo,
   theory: {
     overview:
-      "Virtualization renders only the visible portion of a large list (windowing).",
-    deepDive:
-      "DOM nodes are heavy memory consumers. A list of 10,000 items creates 10,000 <div>s. Virtualization only creates the ~10 <div>s currently on screen + a buffer. As you scroll, it recycles these nodes or unmounts old ones, simulating a large scroll height with a fake spacer container.",
-    whenToUse: [
-      "Lists with 100+ items that are complex",
-      "Infinite scroll feeds (Facebook/Twitter style)",
-      "Data Grid/Tables with thousands of rows",
-    ],
+      "A technique to render huge lists of data efficiently. Instead of creating DOM nodes for all 10,000 items, you only create the 10 items currently visible on screen. As you scroll, you recycle them.",
+    definition:
+      "Virtualization (or Windowing) is a technique that only renders a small subset of rows at any given time.",
     syntax: `// Using react-window
-<FixedSizeList itemCount={1000} height={500} ...>
-  {RowComponent}
+<FixedSizeList
+  height={150}
+  itemCount={1000}
+  itemSize={35}
+  width={300}
+>
+  {Row}
 </FixedSizeList>`,
-    tips: [
-      "Use established libraries (virtuoso, react-window)",
-      "Only works if you can calculate or know item heights",
+    realLifeScenario:
+      "Social Media Feed (Twitter/Facebook). You can scroll forever. If they kept all previous posts in the DOM, your browser would crash after 10 minutes. They 'virtualize' the list, keeping only the visible tweets in memory/DOM.",
+    pros: [
+      "Constant memory usage regardless of list size.",
+      "Silky smooth scrolling performance (60fps).",
+      "Near-instant initial render.",
     ],
+    cons: [
+      "Ctrl+F (Browser Find) doesn't find off-screen items.",
+      "Complexity with dynamic item heights.",
+      "Accessibility can be tricky.",
+    ],
+    whenToUse: [
+      "Lists with 100+ complex items or 1000+ simple items",
+      "Infinite scroll feeds",
+      "Tables with massive datasets",
+    ],
+    tips: [
+      "Use libraries like `react-window` or `react-virtuality`",
+      "Handle dynamic heights carefully (performance hit)",
+    ],
+    deepDive:
+      "It calculates which items are visible based on scroll position and container height. It creates absolute-positioned divs for those items. It adds a big empty div to simulate the total scroll height.",
     commonPitfalls: [
-      "Trying to implement from scratch (very hard to handle scroll jank/edge cases)",
+      "Implementing it for small lists (premature optimization)",
+      "Breaking accessibility (screen readers need to know total count)",
     ],
   },
 };

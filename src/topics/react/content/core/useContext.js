@@ -10,24 +10,41 @@ export const useContextData = {
   icon: Users,
   title: "useContext",
   category: "core",
-  description: "Consume context values without nesting",
+  description: "Global state management",
   component: UseContextDemo,
   theory: {
     overview:
-      "Accepts a context object (the value returned from React.createContext) and returns the current context value.",
-    deepDive:
-      "It lets you essentially 'teleport' data to any component in the tree without prop drilling. When the nearest <Provider> updates, this hook triggers a re-render with the latest value.",
+      "Enables you to subscribe to React Context without introducing nesting. It allows you to share data (like user auth, theme, or language) across the component tree without manually passing props at every level.",
+    definition:
+      "useContext is a hook that accepts a context object (the value returned from React.createContext) and returns the current context value for that context.",
+    syntax: `const ThemeContext = createContext("light");
+// In child
+const theme = useContext(ThemeContext);`,
+    realLifeScenario:
+      "Theming your app. You wrap the entire app in a `<ThemeProvider>`. Any button or card deep in the tree can call `useContext(ThemeContext)` to decide if it should be dark mode or light mode, without passing `isDarkMode` through 10 layers of components.",
+    pros: [
+      "Solving Prop Drilling.",
+      "Simplifies code by removing explicit prop passing.",
+      "Great for global settings (Theme, Auth, Language).",
+    ],
+    cons: [
+      "Makes components less reusable (dependent on context).",
+      "Can cause performance issues if value changes often (re-renders all consumers).",
+    ],
     whenToUse: [
-      "Global state (User, Theme, Language)",
-      "Avoiding prop drilling through many layers",
+      "Theming (Dark/Light mode)",
+      "User Authentication state",
+      "Global settings/Locales",
     ],
-    syntax: `const value = useContext(MyContext);`,
     tips: [
-      "Split contexts to avoid unnecessary re-renders (see Patterns)",
-      "Don't overuse; it makes components harder to reuse",
+      "Split contexts to avoid unnecessary re-renders",
+      "Combine with useReducer for complex global state",
     ],
+    deepDive:
+      "When the Context Provider updates, all components calling useContext with that context will re-render. React optimizes this to traverse up the tree to find the provider.",
     commonPitfalls: [
-      "Updating the Provider value with a new object every render (forces all consumers to update)",
+      "Overusing context (makes components harder to reuse)",
+      "Updating context value too frequently (performance hit)",
     ],
   },
 };

@@ -10,29 +10,41 @@ export const useLayoutEffectData = {
   icon: Layout,
   title: "useLayoutEffect",
   category: "advanced",
-  description: "Fires synchronously after DOM mutations",
+  description: "Fire effects before painting",
   component: UseLayoutEffectDemo,
   theory: {
     overview:
-      "Identical to useEffect, but fires synchronously after DOM mutations but before the browser paints.",
-    deepDive:
-      "useEffect runs *after* the paint, which is good for performance. useLayoutEffect blocks the paint. Use it when you need to measure the DOM (width/height/scroll) and immediately mutate it (e.g. tooltip positioning) to prevent visual flickering.",
-    whenToUse: [
-      "Measuring DOM elements (getBoundingClientRect)",
-      "Animating layout (FLIP animations)",
-      "preventing visual flashes/flickers",
-    ],
+      "A version of `useEffect` that fires synchronously after all DOM mutations but *before* the browser paints the screen. It's used to measure layout or make DOM changes without causing visual flickers.",
+    definition:
+      "useLayoutEffect is a version of useEffect that fires before the browser repaints the screen.",
     syntax: `useLayoutEffect(() => {
   const { height } = ref.current.getBoundingClientRect();
-  setHeight(height);
+  setTooltipHeight(height);
 }, []);`,
-    tips: [
-      "Prefer useEffect (99% of cases)",
-      "Runs synchronously so it hurts Performance",
+    realLifeScenario:
+      "Positioning a tooltip. You need to render the tooltip, measure its height, and then adjust its top/left position. If you use `useEffect`, the user sees the tooltip jump (flicker). With `useLayoutEffect`, the adjustment happens before the user sees the first frame.",
+    pros: [
+      "Prevents visual flickers for DOM measurements.",
+      "Synchronous update ensures style consistency.",
     ],
+    cons: [
+      "Blocks visual updates (can hurt performance).",
+      "Delays First Contentful Paint.",
+    ],
+    whenToUse: [
+      "Measuring DOM elements (width, height, position)",
+      "Animating layout changes synchronously",
+      "Preventing visual flickers (FOUC)",
+    ],
+    tips: [
+      "Start with useEffect; switch to useLayoutEffect only if it flickers",
+      "SSR warning: doesn't run on server (leads to hydration mismatch)",
+    ],
+    deepDive:
+      "Normal useEffect runs incorrectly for layout measurements because the browser might have already painted. useLayoutEffect blocks the painting process until your code finishes.",
     commonPitfalls: [
-      "Using for data fetching (blocks UI)",
-      "Using extensively triggers jank",
+      "Using it for data fetching (blocks the UI unnecessarily)",
+      "Ignoring SSR warnings (needs a shim for server)",
     ],
   },
 };

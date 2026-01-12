@@ -10,26 +10,43 @@ export const debounceData = {
   icon: Clock,
   title: "Debouncing",
   category: "patterns",
-  description: "Limit the rate at which a function fires",
+  description: "Limit function execution rate",
   component: DebounceDemo,
   theory: {
     overview:
-      "Debouncing ensures that a function is not called until a certain amount of time has passed since the last call.",
-    deepDive:
-      "Crucial for network optimization. If a user types 60wpm, you don't want 300 API calls. Debouncing waits for the user to 'stop' (pause) for N ms before firing.",
-    whenToUse: [
-      "Search inputs triggering API calls",
-      "Window resize event handlers",
-      "Form validation on typing",
+      "A technique to limit the rate at which a function fires. It ensures a time-consuming task (like an API call) only runs after the user has *stopped* doing an action (like typing) for a certain delay.",
+    definition:
+      "Debouncing forces a function to wait a certain amount of time before running. If the function is called again during that time, the timer resets.",
+    syntax: `const debouncedSearch = debounce((query) => {
+  api.search(query);
+}, 500);
+
+// Usage
+<input onChange={(e) => debouncedSearch(e.target.value)} />`,
+    realLifeScenario:
+      "Search Autocomplete. Without debounce, searching for 'React' fires 5 API calls ('R', 'Re', 'Rea'...). With debounce (500ms), it waits until you stop typing and fires only 1 call for 'React'.",
+    pros: [
+      "Reduces server load (fewer API calls).",
+      "Improves client performance (fewer renders).",
     ],
-    syntax: `const debouncedValue = useDebounce(value, 500);
-      
-useEffect(() => {
-    // API Call
-}, [debouncedValue]);`,
-    tips: ["Use a custom hook for reuse", "Clean up timeouts in useEffect"],
+    cons: [
+      "User sees results with a slight delay.",
+      "Complexity in handling 'cleanup' (canceling pending timers).",
+    ],
+    whenToUse: [
+      "Search inputs / Autocomplete",
+      "Window resize/scroll event handlers",
+      "Auto-saving forms",
+    ],
+    tips: [
+      "Use cleanup to cancel timers on unmount",
+      "Use Lodash.debounce or custom hook for simplicity",
+    ],
+    deepDive:
+      "Debounce is different from Throttle. Throttle ensures function runs at most once every X ms (steady flow). Debounce waits for a pause in the pauses.",
     commonPitfalls: [
-      "Implementing directly inside render without useCallback (timer gets recreated/cleared constantly)",
+      "Creating the debounced function inside the render loop (it gets recreated, timer lost)",
+      "Forgetting to persist the function with useCallback or useRef",
     ],
   },
 };

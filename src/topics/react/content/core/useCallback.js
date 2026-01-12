@@ -10,24 +10,32 @@ export const useCallbackData = {
   icon: Code,
   title: "useCallback",
   category: "core",
-  description: "Memoize callback functions to prevent unnecessary re-renders",
+  description: "Memoize callback functions",
   component: UseCallbackDemo,
   theory: {
     overview:
-      "useCallback returns a memoized version of a callback function that only changes if dependencies change.",
-    deepDive:
-      "In JavaScript, functions are objects. Every time a component re-renders, all functions defined inside it are recreated with new references. Closures formed by these functions also capture new scope. exact equality (===) checks fail between the old and new function. `useCallback` caches the function instance between renders, preserving referential equality unless dependencies change. This is crucial when passing callbacks to `React.memo`ized components.",
-    whenToUse: [
-      "Passing callbacks to optimized child components (React.memo)",
-      " preventing child re-renders caused by new function references",
-      "When the callback is used as a dependency in other hooks (useEffect)",
+      "Similar to `useMemo`, but specifically for functions. It returns a memoized version of the callback that only changes if one of the dependencies has changed, useful for passing stable functions to optimized child components.",
+    definition:
+      "useCallback is a React Hook that lets you cache a function definition between re-renders.",
+    syntax: `const handleClick = useCallback(() => {
+  doSomething(a, b);
+}, [a, b]);`,
+    realLifeScenario:
+      "Passing a 'DeleteItem' function to a list of expensive 'Row' components. If `DeleteItem` involves state, it gets recreated every render. This forces every 'Row' to re-render (even if memoized). `useCallback` keeps the function identity stable, so Rows only re-render if their data changes.",
+    pros: [
+      "Prevents unnecessary re-renders of child components.",
+      "Maintains referential equality for functions.",
+      "Essential for dependencies in other hooks (useEffect dependencies).",
     ],
-    syntax: `const memoizedCallback = useCallback(
-  () => {
-    doSomething(a, b);
-  },
-  [a, b]
-);`,
+    cons: [
+      "Overhead of dependency array checking.",
+      "Often used prematurely where not needed.",
+    ],
+    whenToUse: [
+      "Passing functions to optimized child components (React.memo)",
+      "When a function is a dependency of useEffect",
+      "Preventing infinite loops in effects dependent on functions",
+    ],
     tips: [
       "Include all dependencies in the dependency array",
       "Don't optimize pre-maturely; it has memory overhead",

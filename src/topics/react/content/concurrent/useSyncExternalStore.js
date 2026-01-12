@@ -10,22 +10,43 @@ export const useSyncExternalStoreData = {
   icon: Wifi,
   title: "useSyncExternalStore",
   category: "concurrent",
-  description: "Subscribe to an external store",
+  description: "Subscribe to external stores",
   component: UseSyncExternalStoreDemo,
   theory: {
     overview:
-      "A hook recommended for reading and subscribing from external data sources in a way that’s compatible with concurrent rendering features.",
-    deepDive:
-      "React 18's concurrent rendering (tearing) made it hard for external stores (Redux, MobX, global variables) to stay consistent. This hook enforces consistency by synchronously updating the UI if the store changes, preventing visual glitches.",
+      "Designed for library authors to subscribe to external data sources (like Redux, Zustand, or browser APIs). It ensures consistent snapshots during concurrent rendering, preventing 'tearing'.",
+    definition:
+      "useSyncExternalStore is a React Hook that lets you subscribe to an external store.",
+    syntax: `const state = useSyncExternalStore(
+  store.subscribe,
+  store.getSnapshot,
+  store.getServerSnapshot // Optional (for SSR)
+);`,
+    realLifeScenario:
+      "Subscribing to current browser window size or online status. The `window.navigator.onLine` is an external mutable source. `useSyncExternalStore` allows React components to reactively update when this external value changes, without tearing.",
+    pros: [
+      "Fixes tearing issues in concurrent mode.",
+      "Standard API for all external state libraries.",
+      "SSR support via getServerSnapshot.",
+    ],
+    cons: [
+      "Complex API, mostly for library authors.",
+      "Snapshots must be immutable/consistent.",
+    ],
     whenToUse: [
-      "Subscribing to browser APIs (navigator.onLine, window.innerWidth)",
-      "Library authors (Redux, Zustand) implementing subscriptions",
+      "Subscribing to external stores (Redux, Zustand)",
+      "Browser APIs (navigator, window resize)",
+      "Legacy non-React state integration",
     ],
-    syntax: `const state = useSyncExternalStore(subscribe, getSnapshot);`,
     tips: [
-      "Prefer built-in state/context if possible",
-      "The snapshot function must return a stable value or it triggers infinite loops",
+      "getSnapshot result must be cached/stable",
+      "Usually hidden inside custom hooks (useOnlineStatus)",
     ],
-    commonPitfalls: ["Using it for simple local state"],
+    deepDive:
+      "Replaces the old pattern of useEffect + useState for external subscriptions. It forces synchronous updates for external stores to ensure the UI doesn't show inconsistent state (tearing) during a concurrent render.",
+    commonPitfalls: [
+      "Passing a new getSnapshot function every render (causes infinite loops)",
+      "Using it for local React state (redundant)",
+    ],
   },
 };

@@ -6,33 +6,47 @@ const LazyLoadDemo = lazy(() =>
 );
 
 export const lazyLoadData = {
-  id: "lazy",
+  id: "lazy-loading",
   icon: Package,
-  title: "Code Splitting",
+  title: "Lazy Loading",
   category: "patterns",
-  description: "Load components only when needed",
+  description: "Code splitting and suspension",
   component: LazyLoadDemo,
   theory: {
     overview:
-      "React.lazy allows you to render a dynamic import as a regular component, reducing initial bundle size.",
-    deepDive:
-      "Modern bundlers (Vite/Webpack) can split your code into 'chunks'. `React.lazy` fetches the chunk over the network only when the component is actually rendered. `Suspense` handles the 'loading' state while the network request is pending.",
-    whenToUse: [
-      "Route-based code splitting (Page level)",
-      "Heavy Visualization/Chart libraries",
-      "Modals that aren't initially open",
-    ],
-    syntax: `const LazyComp = lazy(() => import('./Comp'));
+      "A design pattern that defers the loading of non-critical resources (like images or code components) until they are actually needed. In React, this usually means `React.lazy` and `Suspense`.",
+    definition:
+      "Lazy loading is the practice of delaying load or initialization of resources or objects until the point at which they are needed to improve performance and save system resources.",
+    syntax: `const Profile = lazy(() => import('./Profile'));
 
-<Suspense fallback={<Loading />}>
-  <LazyComp />
+// Usage
+<Suspense fallback={<Spinner />}>
+  <Profile />
 </Suspense>`,
-    tips: [
-      "Wrap closest high-level parent in Suspense",
-      "Reduces Time-to-Interactive (TTI)",
+    realLifeScenario:
+      "A dashboard with a heavy 'Admin Panel' that only 1% of users see. Instead of shipping that code to everyone, you 'lazy load' it. The byte size of the initial bundle drops, making the site load faster for the 99% who never visit Admin.",
+    pros: [
+      "Faster initial load time (smaller bundle).",
+      "Saves bandwidth for users.",
     ],
+    cons: [
+      "User waits when navigating to the lazy part (needs spinner).",
+      "Complexity with layout shifts or loading states.",
+    ],
+    whenToUse: [
+      "Route-based code splitting (Pages)",
+      "Heavy components (Charts, Maps, Editors) not immediately visible",
+      "Modals/Dialogs that open on interaction",
+    ],
+    tips: [
+      "Wrap routes in Suspense",
+      "Use meaningful loading skeletons instead of blank screens",
+    ],
+    deepDive:
+      "Webpack/Vite sees the dynamic `import()` and creates a separate 'chunk' file. React `Suspense` manages the UI state (showing fallback) while that network request fetches the chunk.",
     commonPitfalls: [
-      "Lazy loading small components (network overhead > download savings)",
+      "Lazy loading everything (too many network requests)",
+      "Lazy loading above the fold content (causes layout shift/LCP issues)",
     ],
   },
 };

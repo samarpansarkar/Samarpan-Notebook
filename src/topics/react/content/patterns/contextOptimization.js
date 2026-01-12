@@ -6,30 +6,47 @@ const ContextOptimizationDemo = lazy(() =>
 );
 
 export const contextOptimizationData = {
-  id: "context-optimization-pattern",
+  id: "context-optimization",
   icon: Users,
   title: "Context Optimization",
   category: "patterns",
-  description: "Prevent unnecessary re-renders in Context API",
+  description: "Preventing context re-renders",
   component: ContextOptimizationDemo,
   theory: {
     overview:
-      "Split Contexts to ensure components only re-render when the specific data they typically need changes.",
-    deepDive:
-      "Context API triggers re-renders for all consumers when the value reference changes. Splitting contexts allows granular subscriptions.",
-    whenToUse: [
-      "When Context object has multiple unrelated values (e.g. User and Theme)",
-      "When frequency of updates differs drastically between values",
+      "Optimizing Context performance to prevent unnecessary re-renders. A naïve Context implementation can cause the entire app to re-render whenever a single value changes.",
+    definition:
+      "Context Optimization refers to patterns (like splitting context or memoizing values) that reduce the number of components re-rendering when context updates.",
+    syntax: `const ValueContext = createContext();
+const DispatchContext = createContext();
+
+// App
+<ValueContext.Provider value={state}>
+  <DispatchContext.Provider value={dispatch}>
+    {children}
+  </DispatchContext.Provider>
+</ValueContext.Provider>`,
+    realLifeScenario:
+      "A global 'Settings' context. If you put 'Theme' (changes rarely) and 'MousePosition' (changes constantly) in the same Context, every time the mouse moves, the whole app re-renders (because Theme consumers also update). Splitting them into `ThemeContext` and `MousePosContext` fixes this.",
+    pros: [
+      "Drastically reduces re-renders.",
+      "Keeps app performant even with global state.",
     ],
-    syntax: `// Good Pattern
-<UserContext.Provider value={user}>
-  <ThemeContext.Provider value={theme}>
-    <App />
-  </ThemeContext.Provider>
-</UserContext.Provider>`,
-    tips: ["Keep contexts small and focused"],
+    cons: ["Increases boilerplate (more Providers).", "Complexity in setup."],
+    whenToUse: [
+      "High-frequency updates in Context",
+      "Large component trees consuming context",
+      "Separating static data/dispatchers from mutable data",
+    ],
+    tips: [
+      "Split state and dispatch into separate contexts",
+      "Use useMemo for the value passed to Provider",
+    ],
+    deepDive:
+      "If the value passed to `Provider` is a new object every time `{ a: 1 }`, all consumers re-render. Memoizing it `useMemo(() => ({ a: 1 }), [])` prevents this only if the parent re-renders. Splitting Context is the ultimate fix.",
     commonPitfalls: [
-      "Passing a new object literal directly to `value` prop: This forces all consumers to re-render every time the Provider re-renders.",
+      "Passing a new object literal directly to `value` prop",
+      "Putting everything in one giant GlobalContext",
     ],
   },
 };

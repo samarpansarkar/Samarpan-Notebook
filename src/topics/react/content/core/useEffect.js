@@ -10,31 +10,45 @@ export const useEffectData = {
   icon: RefreshCw,
   title: "useEffect",
   category: "core",
-  description: "Synchronize a component with an external system",
+  description: "Handle side effects in components",
   component: UseEffectDemo,
   theory: {
-    overview: "useEffect lets you perform side effects in function components.",
-    deepDive:
-      "Passes a function that will run after the render is committed to the screen. React compares values in the dependency array to decide if it should re-run. If the array is empty [], it runs only on mount. If omitted, it runs on every render.",
-    whenToUse: [
-      "Data fetching",
-      "Subscribing to events (window resize, sockets)",
-      "Manually changing the DOM (document.title)",
-    ],
+    overview:
+      "The primary hook for handling side effects like data fetching, subscriptions, or manual DOM manipulations. It serves as a replacement for lifecycle methods like componentDidMount, componentDidUpdate, and componentWillUnmount.",
+    definition:
+      "useEffect is a Hook that allows you to perform side effects in function components. It accepts a function that contains imperative, possibly effectful code.",
     syntax: `useEffect(() => {
-  const connection = createConnection();
-  connection.connect();
-  
-  // Cleanup function (runs before re-running effect or unmount)
-  return () => connection.disconnect();
-}, [dependency]);`,
+  const subscription = props.source.subscribe();
+  return () => {
+    // Cleanup
+    subscription.unsubscribe();
+  };
+}, [props.source]); // Dependency array`,
+    realLifeScenario:
+      "Fetching user data from an API when a profile component loads. You use `useEffect` with an empty dependency array `[]` to trigger the fetch once on mount. If the user ID changes, you put `userId` in the dependency array to re-fetch.",
+    pros: [
+      "Unifies lifecycle methods into a single API.",
+      "Handles cleanup logic neatly via the return function.",
+      " Declarative handling of dependencies.",
+    ],
+    cons: [
+      "Easy to create infinite loops if dependencies are wrong.",
+      "Complex logic can become hard to read (consider custom hooks).",
+    ],
+    whenToUse: [
+      "Data fetching (API calls)",
+      "Setting up subscriptions/event listeners",
+      "Manual DOM updates",
+    ],
     tips: [
       "Always include all used variables in the dependency array",
-      "Return a cleanup function to avoid memory leaks",
+      "Use cleanup functions to prevent memory leaks",
     ],
+    deepDive:
+      "Effects run after every render by default. The dependency array acts as an optimization: React only re-runs the effect if one of the dependencies has changed. The cleanup function runs before the component unmounts and before re-running the effect.",
     commonPitfalls: [
-      "Missing dependencies (stale closures)",
-      "Fetching data without a cleanup/ignore flag (race conditions)",
+      "Missing dependencies causing stale closures",
+      "infinite loops by updating state in effect without proper conditions",
     ],
   },
 };
