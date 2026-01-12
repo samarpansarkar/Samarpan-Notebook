@@ -1,7 +1,7 @@
-import { coreHooks } from "./core";
-import { advancedHooks } from "./advanced";
-import { concurrentHooks } from "./concurrent";
-import { patterns } from "./patterns";
+import { coreHooks } from "@/topics/react/modules/core";
+import { advancedHooks } from "@/topics/react/modules/advanced";
+import { concurrentHooks } from "@/topics/react/modules/concurrent";
+import { patterns } from "@/topics/react/modules/patterns";
 
 const STUDY_SECTIONS = [
   ...coreHooks,

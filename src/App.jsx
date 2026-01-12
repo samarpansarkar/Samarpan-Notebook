@@ -1,10 +1,10 @@
 import { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import MainLayout from './components/layout/MainLayout';
+import MainLayout from '@/components/layout/MainLayout';
 
 // Lazy Load Pages
-const HomePage = lazy(() => import('./pages/HomePage'));
-const ReactPage = lazy(() => import('./topics/react/ReactPage'));
+const HomePage = lazy(() => import('@/pages/HomePage'));
+const ReactPage = lazy(() => import('@/topics/react/ReactPage'));
 
 // Placeholder components for future topics
 const PlaceholderPage = ({ title }) => (

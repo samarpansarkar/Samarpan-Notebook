@@ -1,5 +1,5 @@
-import TopicLayout from '../../components/layout/TopicLayout';
-import STUDY_SECTIONS from './modules/index';
+import TopicLayout from '@/components/layout/TopicLayout';
+import STUDY_SECTIONS from '@/topics/react/modules/index';
 
 const ReactPage = () => {
     return (
