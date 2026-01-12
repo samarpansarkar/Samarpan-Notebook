@@ -1,7 +1,6 @@
 import { lazy } from "react";
 import { Activity } from "lucide-react";
 
-// Lazy Load Component
 const UseTransitionDemo = lazy(() =>
   import("@/topics/react/components/UseTransitionDemo")
 );

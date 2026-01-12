@@ -1,7 +1,6 @@
 import { lazy } from "react";
 import { Database } from "lucide-react";
 
-// Lazy Load Component
 const UseReducerDemo = lazy(() =>
   import("@/topics/react/components/UseReducerDemo")
 );

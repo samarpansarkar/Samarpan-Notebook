@@ -1,7 +1,6 @@
 import { lazy } from "react";
 import { Wifi } from "lucide-react";
 
-// Lazy Load Component
 const UseSyncExternalStoreDemo = lazy(() =>
   import("@/topics/react/components/UseSyncExternalStoreDemo")
 );

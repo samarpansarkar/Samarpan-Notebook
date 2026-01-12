@@ -2,11 +2,11 @@ import { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 
-// Lazy Load Pages
+
 const HomePage = lazy(() => import('@/pages/HomePage'));
 const ReactPage = lazy(() => import('@/topics/react/ReactPage'));
 
-// Placeholder components for future topics
+
 const PlaceholderPage = ({ title }) => (
   <div className="text-center py-20">
     <h2 className="text-3xl font-bold text-gray-300 mb-4">{title}</h2>
@@ -14,7 +14,7 @@ const PlaceholderPage = ({ title }) => (
   </div>
 );
 
-// Loading Fallback
+
 const PageLoader = () => (
   <div className="flex items-center justify-center h-full min-h-[50vh]">
     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
@@ -35,7 +35,7 @@ export default function App() {
             }
           />
 
-          {/* React Route */}
+
           <Route
             path="react"
             element={
@@ -53,12 +53,12 @@ export default function App() {
             }
           />
 
-          {/* Other Topics */}
+
           <Route path="js" element={<PlaceholderPage title="JavaScript Core" />} />
           <Route path="html-css" element={<PlaceholderPage title="HTML & CSS" />} />
           <Route path="ts" element={<PlaceholderPage title="TypeScript" />} />
 
-          {/* Fallback */}
+
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

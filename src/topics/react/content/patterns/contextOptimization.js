@@ -1,7 +1,6 @@
 import { lazy } from "react";
 import { Users } from "lucide-react";
 
-// Lazy Load Component
 const ContextOptimizationDemo = lazy(() =>
   import("@/topics/react/components/ContextOptimizationDemo")
 );

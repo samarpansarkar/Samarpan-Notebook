@@ -1,7 +1,6 @@
 import { lazy } from "react";
 import { Box } from "lucide-react";
 
-// Lazy Load Component
 const UseStateDemo = lazy(() =>
   import("@/topics/react/components/UseStateDemo")
 );

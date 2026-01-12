@@ -1,7 +1,6 @@
 import { lazy } from "react";
 import { MousePointer } from "lucide-react";
 
-// Lazy Load Component
 const UseRefDemo = lazy(() => import("@/topics/react/components/UseRefDemo"));
 
 export const useRefData = {

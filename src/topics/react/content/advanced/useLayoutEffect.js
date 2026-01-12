@@ -1,7 +1,6 @@
 import { lazy } from "react";
 import { Layout } from "lucide-react";
 
-// Lazy Load Component
 const UseLayoutEffectDemo = lazy(() =>
   import("@/topics/react/components/UseLayoutEffectDemo")
 );

@@ -5,10 +5,10 @@ import { BookOpen, ChevronDown, ChevronUp, Play } from 'lucide-react';
 const TopicLayout = ({ title, sections, basePath }) => {
     const { topicId } = useParams();
     const navigate = useNavigate();
-    const [viewMode, setViewMode] = useState('split'); // 'theory', 'demo', 'split'
+    const [viewMode, setViewMode] = useState('split');
     const [selectedCategory, setSelectedCategory] = useState('all');
 
-    // Extract unique categories
+
     const categories = useMemo(() => {
         const cats = new Set(sections.map(s => s.category).filter(Boolean));
         return ['all', ...Array.from(cats)];
@@ -33,7 +33,7 @@ const TopicLayout = ({ title, sections, basePath }) => {
 
     return (
         <div className="max-w-7xl mx-auto">
-            {/* Header */}
+
             <div className="text-center mb-8">
                 <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
                     {title}
@@ -43,7 +43,7 @@ const TopicLayout = ({ title, sections, basePath }) => {
                 </p>
             </div>
 
-            {/* Category Filter */}
+
             {categories.length > 2 && (
                 <div className="flex justify-center gap-2 mb-6 flex-wrap">
                     {categories.map(cat => (
@@ -61,7 +61,7 @@ const TopicLayout = ({ title, sections, basePath }) => {
                 </div>
             )}
 
-            {/* Topics List */}
+
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
                 {filteredSections.map(section => {
                     const Icon = section.icon;
@@ -95,10 +95,10 @@ const TopicLayout = ({ title, sections, basePath }) => {
                 })}
             </div>
 
-            {/* Content Area */}
+
             {activeContent ? (
                 <div className="bg-white rounded-xl shadow-xl overflow-hidden mb-12 border border-gray-200">
-                    {/* View Mode Toggle */}
+
                     <div className="bg-gray-50 border-b border-gray-200 p-4">
                         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                             <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
@@ -122,7 +122,7 @@ const TopicLayout = ({ title, sections, basePath }) => {
                     </div>
 
                     <div className={`grid ${viewMode === 'split' ? 'lg:grid-cols-2' : 'grid-cols-1'} divide-y lg:divide-y-0 lg:divide-x divide-gray-200`}>
-                        {/* Theory Section */}
+
                         {(viewMode === 'theory' || viewMode === 'split') && (
                             <div className="p-6 space-y-6 overflow-auto max-h-[800px] bg-white">
                                 <div>
@@ -161,7 +161,7 @@ const TopicLayout = ({ title, sections, basePath }) => {
                                     </ul>
                                 </div>
 
-                                {/* Deep Dive Section */}
+
                                 {activeContent.theory.deepDive && (
                                     <div>
                                         <h3 className="text-lg font-bold text-gray-900 mb-2 border-b pb-2">🔬 Deep Dive</h3>
@@ -171,7 +171,7 @@ const TopicLayout = ({ title, sections, basePath }) => {
                                     </div>
                                 )}
 
-                                {/* Common Pitfalls Section */}
+
                                 {activeContent.theory.commonPitfalls && (
                                     <div>
                                         <h3 className="text-lg font-bold text-red-900 mb-2 border-b pb-2">⚠️ Common Pitfalls</h3>
@@ -188,7 +188,7 @@ const TopicLayout = ({ title, sections, basePath }) => {
                             </div>
                         )}
 
-                        {/* Demo Section */}
+
                         {(viewMode === 'demo' || viewMode === 'split') && (
                             <div className="p-6 bg-gray-50 flex flex-col">
                                 <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
@@ -221,7 +221,7 @@ const TopicLayout = ({ title, sections, basePath }) => {
                     </div>
                 </div>
             ) : (
-                /* Getting Started / Empty State */
+
                 <div className="bg-white rounded-xl shadow-lg p-12 text-center border border-gray-100 max-w-2xl mx-auto">
                     <BookOpen className="w-20 h-20 text-indigo-100 mx-auto mb-6" />
                     <h3 className="text-2xl font-bold text-gray-900 mb-3">

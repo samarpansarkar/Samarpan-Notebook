@@ -1,7 +1,6 @@
 import { lazy } from "react";
 import { Package } from "lucide-react";
 
-// Lazy Load Component
 const LazyLoadDemo = lazy(() =>
   import("@/topics/react/components/LazyLoadExample")
 );

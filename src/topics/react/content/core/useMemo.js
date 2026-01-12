@@ -1,7 +1,6 @@
 import { lazy } from "react";
 import { Zap } from "lucide-react";
 
-// Lazy Load Component
 const UseMemoDemo = lazy(() => import("@/topics/react/components/UseMemoDemo"));
 
 export const useMemoData = {

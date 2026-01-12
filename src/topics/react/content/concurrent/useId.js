@@ -1,7 +1,6 @@
 import { lazy } from "react";
 import { Hash } from "lucide-react";
 
-// Lazy Load Component
 const UseIdDemo = lazy(() => import("@/topics/react/components/UseIdDemo"));
 
 export const useIdData = {

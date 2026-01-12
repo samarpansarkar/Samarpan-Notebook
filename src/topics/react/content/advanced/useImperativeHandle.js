@@ -1,7 +1,6 @@
 import { lazy } from "react";
 import { MoreHorizontal } from "lucide-react";
 
-// Lazy Load Component
 const UseImperativeHandleDemo = lazy(() =>
   import("@/topics/react/components/UseImperativeHandleDemo")
 );

@@ -1,7 +1,6 @@
 import { lazy } from "react";
 import { Clock } from "lucide-react";
 
-// Lazy Load Component
 const DebounceDemo = lazy(() =>
   import("@/topics/react/components/DebounceDemo")
 );

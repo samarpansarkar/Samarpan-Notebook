@@ -1,7 +1,6 @@
 import { lazy } from "react";
 import { Layers } from "lucide-react";
 
-// Lazy Load Component
 const UseInsertionEffectDemo = lazy(() =>
   import("@/topics/react/components/UseInsertionEffectDemo")
 );

@@ -1,7 +1,6 @@
 import { lazy } from "react";
 import { Server } from "lucide-react";
 
-// Lazy Load Component
 const UseDeferredValueDemo = lazy(() =>
   import("@/topics/react/components/UseDeferredValueDemo")
 );

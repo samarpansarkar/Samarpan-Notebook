@@ -1,7 +1,6 @@
 import { lazy } from "react";
 import { Activity } from "lucide-react";
 
-// Lazy Load Component
 const CustomHooksDemo = lazy(() =>
   import("@/topics/react/components/CustomHooksDemo")
 );

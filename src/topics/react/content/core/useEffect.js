@@ -1,7 +1,6 @@
 import { lazy } from "react";
 import { RefreshCw } from "lucide-react";
 
-// Lazy Load Component
 const UseEffectDemo = lazy(() =>
   import("@/topics/react/components/UseEffectDemo")
 );

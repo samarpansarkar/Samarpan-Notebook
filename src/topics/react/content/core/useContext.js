@@ -1,7 +1,6 @@
 import { lazy } from "react";
 import { Users } from "lucide-react";
 
-// Lazy Load Component
 const UseContextDemo = lazy(() =>
   import("@/topics/react/components/UseContextDemo")
 );

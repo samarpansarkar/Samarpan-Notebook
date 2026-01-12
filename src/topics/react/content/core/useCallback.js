@@ -1,7 +1,6 @@
 import { lazy } from "react";
 import { Code } from "lucide-react";
 
-// Lazy Load Component
 const UseCallbackDemo = lazy(() =>
   import("@/topics/react/components/UseCallbackDemo")
 );

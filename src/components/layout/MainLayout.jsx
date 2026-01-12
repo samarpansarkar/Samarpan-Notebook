@@ -13,7 +13,7 @@ const MainLayout = () => {
 
     return (
         <div className="flex min-h-screen bg-gray-50">
-            {/* Sidebar */}
+
             <aside className="w-64 bg-white border-r border-gray-200 fixed h-full z-10 hidden md:flex flex-col">
                 <div className="p-6 border-b border-gray-100">
                     <Link to="/" className="flex items-center gap-2 text-indigo-700 font-bold text-xl">
@@ -28,8 +28,8 @@ const MainLayout = () => {
                             <Link
                                 to="/"
                                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${location.pathname === '/'
-                                        ? 'bg-indigo-50 text-indigo-700 font-medium'
-                                        : 'text-gray-600 hover:bg-gray-50'
+                                    ? 'bg-indigo-50 text-indigo-700 font-medium'
+                                    : 'text-gray-600 hover:bg-gray-50'
                                     }`}
                             >
                                 <BookOpen className="w-5 h-5" />
@@ -46,8 +46,8 @@ const MainLayout = () => {
                                 <Link
                                     to={item.path}
                                     className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${location.pathname.startsWith(item.path)
-                                            ? 'bg-indigo-50 text-indigo-700 font-medium'
-                                            : 'text-gray-600 hover:bg-gray-50'
+                                        ? 'bg-indigo-50 text-indigo-700 font-medium'
+                                        : 'text-gray-600 hover:bg-gray-50'
                                         }`}
                                 >
                                     <item.icon className={`w-5 h-5 ${item.color}`} />
@@ -63,17 +63,17 @@ const MainLayout = () => {
                 </div>
             </aside>
 
-            {/* Mobile Header (TODO: Add mobile menu toggle) */}
+
             <div className="md:hidden fixed top-0 w-full bg-white border-b border-gray-200 p-4 z-20 flex items-center justify-between">
                 <Link to="/" className="flex items-center gap-2 text-indigo-700 font-bold text-lg">
                     <BookOpen className="w-6 h-6" />
                     <span>DevAcademy</span>
                 </Link>
-                {/* Add basic mobile navigation link for now */}
+
                 <div className="text-sm text-gray-500">Menu</div>
             </div>
 
-            {/* Main Content */}
+
             <main className="flex-1 md:ml-64 p-4 md:p-8 pt-20 md:pt-8 overflow-y-auto">
                 <Outlet />
             </main>

@@ -1,7 +1,6 @@
 import { lazy } from "react";
 import { Terminal } from "lucide-react";
 
-// Lazy Load Component
 const UseDebugValueDemo = lazy(() =>
   import("@/topics/react/components/UseDebugValueDemo")
 );
