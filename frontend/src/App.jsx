@@ -1,10 +1,19 @@
 import { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
+import { TopicProvider } from '@/context/TopicContext';
 
 
 const HomePage = lazy(() => import('@/pages/HomePage'));
 const ReactPage = lazy(() => import('@/topics/react/ReactPage'));
+const AdminLogin = lazy(() => import('@/pages/admin/AdminLogin'));
+const AdminLayout = lazy(() => import('@/components/admin/AdminLayout'));
+const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard'));
+const TopicForm = lazy(() => import('@/pages/admin/TopicForm'));
+const AdminLogin = lazy(() => import('@/pages/admin/AdminLogin'));
+const AdminLayout = lazy(() => import('@/components/admin/AdminLayout'));
+const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard'));
+const TopicForm = lazy(() => import('@/pages/admin/TopicForm'));
 
 
 const PlaceholderPage = ({ title }) => (
@@ -24,44 +33,54 @@ const PageLoader = () => (
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<MainLayout />}>
-          <Route
-            index
-            element={
-              <Suspense fallback={<PageLoader />}>
-                <HomePage />
-              </Suspense>
-            }
-          />
+      <TopicProvider>
+        <Routes>
+          <Route path="/admin/login" element={<AdminLogin />} />
+
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="topic/new" element={<TopicForm />} />
+            <Route path="topic/edit/:id" element={<TopicForm />} />
+          </Route>
+
+          <Route path="/" element={<MainLayout />}>
+            <Route
+              index
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <HomePage />
+                </Suspense>
+              }
+            />
 
 
-          <Route
-            path="react"
-            element={
-              <Suspense fallback={<PageLoader />}>
-                <ReactPage />
-              </Suspense>
-            }
-          />
-          <Route
-            path="react/:topicId"
-            element={
-              <Suspense fallback={<PageLoader />}>
-                <ReactPage />
-              </Suspense>
-            }
-          />
+            <Route
+              path="react"
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <ReactPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="react/:topicId"
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <ReactPage />
+                </Suspense>
+              }
+            />
 
 
-          <Route path="js" element={<PlaceholderPage title="JavaScript Core" />} />
-          <Route path="html-css" element={<PlaceholderPage title="HTML & CSS" />} />
-          <Route path="ts" element={<PlaceholderPage title="TypeScript" />} />
+            <Route path="js" element={<PlaceholderPage title="JavaScript Core" />} />
+            <Route path="html-css" element={<PlaceholderPage title="HTML & CSS" />} />
+            <Route path="ts" element={<PlaceholderPage title="TypeScript" />} />
 
 
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Route>
-      </Routes>
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
+        </Routes>
+      </TopicProvider>
     </BrowserRouter>
   );
 }

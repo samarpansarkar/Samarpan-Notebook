@@ -2,11 +2,12 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { useState, useMemo } from 'react';
 import Header from './Header';
 import Sidebar from './Sidebar';
-import STUDY_SECTIONS from '@/topics/react/modules/index'; // Currently only React sections available
+import { useTopics } from '@/context/TopicContext';
 
 const MainLayout = () => {
     const location = useLocation();
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const { sections } = useTopics();
 
     // Determine current subject context
     const currentSubject = useMemo(() => {
@@ -24,7 +25,7 @@ const MainLayout = () => {
             return {
                 title: 'React Concepts',
                 basePath: '/react',
-                sections: STUDY_SECTIONS
+                sections: sections
             };
         }
         // Placeholders for other subjects
