@@ -1,13 +1,17 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '@/api/client';
+import { useSubjects } from '@/context/SubjectContext';
 import { Edit, Trash2, Plus, Layers } from 'lucide-react';
 import Modal from '@/components/common/Modal';
 
+
 const AdminTopics = () => {
+    const { subjects } = useSubjects();
     const [topics, setTopics] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [selectedSubject, setSelectedSubject] = useState('All');
 
     const fetchTopics = async () => {
         try {
@@ -46,6 +50,10 @@ const AdminTopics = () => {
         }
     };
 
+    const filteredTopics = selectedSubject === 'All'
+        ? topics
+        : topics.filter(topic => topic.subject === selectedSubject);
+
     if (loading) return <div className="text-white">Loading...</div>;
     if (error) return <div className="text-red-400">{error}</div>;
 
@@ -64,6 +72,34 @@ const AdminTopics = () => {
                 </Link>
             </div>
 
+            {/* Subject Filter Buttons */}
+            <div className="flex flex-wrap gap-2 mb-6">
+                <button
+                    onClick={() => setSelectedSubject('All')}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedSubject === 'All'
+                        ? 'bg-indigo-600 text-white'
+                        : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
+                        }`}
+                >
+                    All
+                </button>
+                {subjects.map(subject => {
+                    const subjectKey = subject.path.replace('/', '');
+                    return (
+                        <button
+                            key={subject._id}
+                            onClick={() => setSelectedSubject(subjectKey)}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedSubject === subjectKey
+                                    ? 'bg-indigo-600 text-white'
+                                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
+                                }`}
+                        >
+                            {subject.title || subject.name}
+                        </button>
+                    );
+                })}
+            </div>
+
             <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden shadow-lg">
                 <table className="w-full text-left border-collapse">
                     <thead className="bg-gray-750 text-gray-400 text-sm uppercase tracking-wider">
@@ -76,7 +112,7 @@ const AdminTopics = () => {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-700 text-gray-300">
-                        {topics.map((topic) => (
+                        {filteredTopics.map((topic) => (
                             <tr key={topic._id} className="hover:bg-gray-750 transition-colors">
                                 <td className="p-4 font-medium text-white flex items-center gap-2">
                                     {topic.name}
@@ -102,10 +138,10 @@ const AdminTopics = () => {
                                 </td>
                             </tr>
                         ))}
-                        {topics.length === 0 && (
+                        {filteredTopics.length === 0 && (
                             <tr>
                                 <td colSpan="5" className="p-8 text-center text-gray-500">
-                                    No topics found. Create one to organize your content.
+                                    No topics found for this subject.
                                 </td>
                             </tr>
                         )}
