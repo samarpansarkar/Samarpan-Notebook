@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, PlusCircle, LogOut, BookOpen, Layers } from 'lucide-react';
+import { LayoutDashboard, PlusCircle, LogOut, BookOpen, Layers, FileText } from 'lucide-react';
 
 const AdminLayout = () => {
     const navigate = useNavigate();
@@ -67,6 +67,17 @@ const AdminLayout = () => {
                     >
                         <Layers size={20} />
                         Topics
+                    </Link>
+
+                    <Link
+                        to="/admin/content"
+                        className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/admin/content')
+                            ? 'bg-indigo-600 text-white'
+                            : 'text-gray-400 hover:bg-gray-700 hover:text-white'
+                            }`}
+                    >
+                        <FileText size={20} />
+                        Content
                     </Link>
 
                     <Link

@@ -12,6 +12,7 @@ const TheoryPracticalForm = lazy(() => import('@/pages/admin/TheoryPracticalForm
 const AdminTopicForm = lazy(() => import('@/pages/admin/AdminTopicForm'));
 const AdminTopics = lazy(() => import('@/pages/admin/AdminTopics'));
 const AdminSubjects = lazy(() => import('@/pages/admin/AdminSubjects'));
+const AdminTheories = lazy(() => import('@/pages/admin/AdminTheories'));
 const SubjectForm = lazy(() => import('@/pages/admin/SubjectForm'));
 
 const PageLoader = () => (
@@ -59,6 +60,11 @@ const AppRoutes = () => {
                 <Route path="topics" element={
                     <Suspense fallback={<PageLoader />}>
                         <AdminTopics />
+                    </Suspense>
+                } />
+                <Route path="content" element={
+                    <Suspense fallback={<PageLoader />}>
+                        <AdminTheories />
                     </Suspense>
                 } />
                 <Route path="topics/new" element={

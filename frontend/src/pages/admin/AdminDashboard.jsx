@@ -1,127 +1,131 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '@/api/client';
-import { Edit, Trash2, Plus } from 'lucide-react';
-import { useTopics } from '@/context/TopicContext';
+import { BookOpen, Layers, FileText, PlusCircle, ExternalLink, Activity } from 'lucide-react';
+
+const StatCard = ({ title, count, icon: Icon, color, to }) => (
+    <Link
+        to={to}
+        className="bg-gray-800 p-6 rounded-xl border border-gray-700 hover:border-indigo-500/50 transition-all group"
+    >
+        <div className="flex justify-between items-start">
+            <div>
+                <p className="text-gray-400 text-sm font-medium">{title}</p>
+                <h3 className="text-3xl font-bold text-white mt-2 group-hover:text-indigo-400 transition-colors">
+                    {count}
+                </h3>
+            </div>
+            <div className={`p-3 rounded-lg bg-opacity-10 ${color}`}>
+                <Icon size={24} className={color.replace('bg-opacity-10', '').trim()} />
+            </div>
+        </div>
+    </Link>
+);
+
+const QuickLink = ({ title, icon: Icon, to, description }) => (
+    <Link
+        to={to}
+        className="flex items-center gap-4 p-4 bg-gray-800 rounded-xl border border-gray-700 hover:bg-gray-750 transition-colors group"
+    >
+        <div className="h-12 w-12 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all">
+            <Icon size={24} />
+        </div>
+        <div>
+            <h4 className="text-white font-medium">{title}</h4>
+            <p className="text-sm text-gray-400">{description}</p>
+        </div>
+    </Link>
+);
 
 const AdminDashboard = () => {
-    const [topics, setTopics] = useState([]);
+    const [stats, setStats] = useState({ subjects: 0, topics: 0, theories: 0 });
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
-
-    const fetchTopics = async () => {
-        try {
-            const { data } = await api.get('/theory');
-            setTopics(data);
-            setLoading(false);
-        } catch (err) {
-            setError('Failed to fetch content');
-            setLoading(false);
-        }
-    };
 
     useEffect(() => {
-        fetchTopics();
+        const fetchStats = async () => {
+            try {
+                const [subjectsRes, topicsRes, theoriesRes] = await Promise.all([
+                    api.get('/subjects'),
+                    api.get('/topics'),
+                    api.get('/theory')
+                ]);
+
+                setStats({
+                    subjects: subjectsRes.data.length,
+                    topics: topicsRes.data.length,
+                    theories: theoriesRes.data.length
+                });
+            } catch (error) {
+                console.error("Failed to fetch dashboard stats", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchStats();
     }, []);
 
-    const { refreshTopics } = useTopics();
-
-    const deleteHandler = async (id) => {
-        if (window.confirm('Are you sure you want to delete this topic?')) {
-            try {
-                await api.delete(`/theory/${id}`);
-                fetchTopics();
-                refreshTopics();
-            } catch (err) {
-                alert('Failed to delete topic');
-            }
-        }
-    };
-
-    if (loading) return <div className="text-white">Loading...</div>;
-    if (error) return <div className="text-red-400">{error}</div>;
+    if (loading) return <div className="text-white">Loading stats...</div>;
 
     return (
-        <div>
-            <div className="flex justify-between items-center mb-8">
-                <h2 className="text-2xl font-bold text-white">Manage Theory Content</h2>
-                <div className="flex gap-4">
-                    <Link
-                        to="/admin/subjects"
-                        className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
-                    >
-                        <Edit size={18} /> Manage Subjects
-                    </Link>
-                    <Link
-                        to="/admin/topic/new"
-                        className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
-                    >
-                        <Plus size={18} /> Add Theory & Practical
-                    </Link>
-                </div>
+        <div className="space-y-8">
+            {/* Header */}
+            <div>
+                <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                    <Activity className="text-indigo-500" />
+                    Dashboard Overview
+                </h2>
+                <p className="text-gray-400 mt-1">Welcome back! Here's what's happening today.</p>
             </div>
 
-            <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden shadow-lg">
-                <table className="w-full text-left border-collapse">
-                    <thead className="bg-gray-750 text-gray-400 text-sm uppercase tracking-wider">
-                        <tr>
-                            <th className="p-4 border-b border-gray-700">Content ID</th>
-                            <th className="p-4 border-b border-gray-700">Title</th>
-                            <th className="p-4 border-b border-gray-700">Subject</th>
-                            <th className="p-4 border-b border-gray-700">Level</th>
-                            <th className="p-4 border-b border-gray-700">Section</th>
-                            <th className="p-4 border-b border-gray-700 text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-700 text-gray-300">
-                        {topics.map((topic) => (
-                            <tr key={topic._id} className="hover:bg-gray-750 transition-colors">
-                                <td className="p-4 font-mono text-sm text-indigo-400">{topic.topicId}</td>
-                                <td className="p-4 font-medium text-white">{topic.title}</td>
-                                <td className="p-4">
-                                    <span className="text-sm text-gray-300 capitalize">{topic.subject}</span>
-                                </td>
-                                <td className="p-4">
-                                    <span className={`px-2 py-1 rounded-full text-xs border ${topic.level === 'beginner' ? 'bg-green-900/30 text-green-400 border-green-800' :
-                                        topic.level === 'intermediate' ? 'bg-blue-900/30 text-blue-400 border-blue-800' :
-                                            topic.level === 'hard' ? 'bg-orange-900/30 text-orange-400 border-orange-800' :
-                                                'bg-red-900/30 text-red-400 border-red-800'
-                                        }`}>
-                                        {topic.level}
-                                    </span>
-                                </td>
-                                <td className="p-4">
-                                    <span className="text-gray-400 text-sm">
-                                        {topic.section}
-                                    </span>
-                                </td>
-                                <td className="p-4 text-right space-x-2">
-                                    <Link
-                                        to={`/admin/topic/edit/${topic._id}`}
-                                        className="inline-flex p-2 text-blue-400 hover:bg-blue-900/30 rounded-md transition-colors"
-                                        title="Edit"
-                                    >
-                                        <Edit size={18} />
-                                    </Link>
-                                    <button
-                                        onClick={() => deleteHandler(topic.topicId)}
-                                        className="inline-flex p-2 text-red-400 hover:bg-red-900/30 rounded-md transition-colors"
-                                        title="Delete"
-                                    >
-                                        <Trash2 size={18} />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                        {topics.length === 0 && (
-                            <tr>
-                                <td colSpan="6" className="p-8 text-center text-gray-500">
-                                    No content found. Add your first Theory & Practical unit!
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <StatCard
+                    title="Total Subjects"
+                    count={stats.subjects}
+                    icon={BookOpen}
+                    color="text-blue-400 bg-blue-400"
+                    to="/admin/subjects"
+                />
+                <StatCard
+                    title="Active Topics"
+                    count={stats.topics}
+                    icon={Layers}
+                    color="text-purple-400 bg-purple-400"
+                    to="/admin/topics"
+                />
+                <StatCard
+                    title="Theory Content"
+                    count={stats.theories}
+                    icon={FileText}
+                    color="text-green-400 bg-green-400"
+                    to="/admin/content"
+                />
+            </div>
+
+            {/* Quick Actions */}
+            <div>
+                <h3 className="text-xl font-semibold text-white mb-4">Quick Actions</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <QuickLink
+                        title="Add New Content"
+                        description="Create a new theory or practical lesson"
+                        icon={PlusCircle}
+                        to="/admin/topic/new"
+                    />
+                    <QuickLink
+                        title="Add Subject"
+                        description="Create a new main subject category"
+                        icon={BookOpen}
+                        to="/admin/subjects/new"
+                    />
+                    <QuickLink
+                        title="View Live Site"
+                        description="Visit the public facing application"
+                        icon={ExternalLink}
+                        to="/"
+                    />
+                </div>
             </div>
         </div>
     );

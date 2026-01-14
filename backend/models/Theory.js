@@ -66,4 +66,4 @@ const TheorySchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Theory", TheorySchema, "topics");
+module.exports = mongoose.model("Theory", TheorySchema);

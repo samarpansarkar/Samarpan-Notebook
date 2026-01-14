@@ -1,7 +1,14 @@
 import axios from "axios";
 
+const environment = "development";
+
+const baseURL =
+  environment == "development"
+    ? "http://localhost:5000/api"
+    : "https://samarpan-notebook.onrender.com/api";
+
 const api = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL,
 });
 
 api.interceptors.request.use(
