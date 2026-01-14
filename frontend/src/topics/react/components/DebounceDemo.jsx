@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 
-// Custom Hook: useDebounce
 const useDebounce = (value, delay) => {
     const [debouncedValue, setDebouncedValue] = useState(value);
 
@@ -22,10 +21,8 @@ const DebounceDemo = () => {
     const [apiCalls, setApiCalls] = useState(0);
     const debouncedText = useDebounce(text, 500);
 
-    // Track previous debounced value to avoid initial increment on mount
     const prevDebouncedText = useRef(debouncedText);
 
-    // Effect for "API Call"
     useEffect(() => {
         if (debouncedText !== prevDebouncedText.current) {
             setApiCalls(c => c + 1);

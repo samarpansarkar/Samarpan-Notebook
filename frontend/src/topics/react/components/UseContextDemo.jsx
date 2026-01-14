@@ -1,12 +1,8 @@
-
 import { createContext, useContext, useState } from 'react';
 
-// 1. Create Context
 const UserContext = createContext();
 
-// 3. Consumer Component (Deeply nested)
 const UserProfile = () => {
-    // 4. Consume the context value
     const user = useContext(UserContext);
 
     return (
@@ -14,7 +10,6 @@ const UserProfile = () => {
             <h4 className="font-bold text-indigo-900 dark:text-indigo-300 mb-2">User Profile Component</h4>
             <div className="text-sm text-gray-600 dark:text-gray-300">
                 <p>Start Date: 2024</p>
-                {/* This data came all the way from Dashboard without props! */}
                 <p className="font-bold text-indigo-600 dark:text-indigo-400 mt-2">Active User: {user.name}</p>
                 <p className="text-xs text-gray-400 dark:text-gray-500">Status: {user.status}</p>
             </div>
@@ -22,7 +17,6 @@ const UserProfile = () => {
     );
 };
 
-// Intermediate Component (Doesn't need to know about 'user')
 const Sidebar = () => {
     return (
         <div className="p-4 bg-gray-50 dark:bg-gray-900 border dark:border-gray-700 rounded h-full transition-colors">
@@ -31,13 +25,11 @@ const Sidebar = () => {
                 <li>Home</li>
                 <li>Settings</li>
             </ul>
-            {/* UserProfile sits inside here */}
             <UserProfile />
         </div>
     );
 };
 
-// 2. Provider Component (Top Level)
 const UseContextDemo = () => {
     const [user, setUser] = useState({ name: 'Guest User', status: 'Offline' });
 
@@ -62,7 +54,6 @@ const UseContextDemo = () => {
                     Data flows directly from <strong>Dashboard</strong> to <strong>UserProfile</strong>, skipping the Sidebar.
                 </p>
 
-                {/* Provide the value to the tree */}
                 <UserContext.Provider value={user}>
                     <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 p-4 rounded-lg">
                         <p className="text-xs font-mono text-gray-400 dark:text-gray-500 mb-2">Dashboard (Provider)</p>

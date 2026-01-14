@@ -3,10 +3,10 @@ import TopicLayout from '@/components/layout/TopicLayout';
 import { useTopics } from '@/context/TopicContext';
 
 const ReactPage = () => {
-    const { sections, loading, error } = useTopics();
+    const { getTopicsBySubject, loading, error } = useTopics();
+    const sections = getTopicsBySubject('react');
 
     if (loading) return <div>Loading content...</div>;
-    // if (error) return <div>Error loading content: {error}</div>; // Optional
 
     return (
         <TopicLayout

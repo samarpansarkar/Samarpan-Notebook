@@ -12,7 +12,6 @@ const UseEffectDemo = () => {
             setLoading(true);
             setError(null);
             try {
-                // Simulating network delay for better demo experience
                 await new Promise(resolve => setTimeout(resolve, 800));
 
                 const response = await fetch('https://dummyjson.com/products/1');
@@ -28,7 +27,7 @@ const UseEffectDemo = () => {
         };
 
         fetchData();
-    }, [refreshIndex]); // Re-run effect when refreshIndex changes
+    }, [refreshIndex]);
 
     const handleRefresh = () => {
         setRefreshIndex(prev => prev + 1);

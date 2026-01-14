@@ -19,8 +19,6 @@ const UseTransitionDemo = () => {
         const value = e.target.value;
         setInput(value);
 
-        // Urgent update: setInput (typing feels fast)
-        // Low priority update: filtering list (feels non-blocking)
         startTransition(() => {
             setList(generateLargeList(value));
         });

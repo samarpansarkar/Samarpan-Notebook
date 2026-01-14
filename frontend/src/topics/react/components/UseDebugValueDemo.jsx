@@ -1,11 +1,8 @@
 import { useState, useDebugValue, useEffect } from 'react';
 
-// Custom Hook
 function useOnlineStatus() {
     const [isOnline, setIsOnline] = useState(true);
 
-    // This label shows up next to "useOnlineStatus" in React DevTools
-    // e.g. "useOnlineStatus: Online"
     useDebugValue(isOnline ? 'Online' : 'Offline');
 
     return isOnline;

@@ -1,7 +1,7 @@
 import { useState, useMemo, Suspense } from 'react';
 import { useParams } from 'react-router-dom';
 import { BookOpen, Play } from 'lucide-react';
-import LiveRenderer from '../LiveRenderer';
+import LiveRenderer from '@/components/LiveRenderer';
 
 const TopicLayout = ({ title, sections, basePath }) => {
     const { topicId } = useParams();
@@ -9,7 +9,6 @@ const TopicLayout = ({ title, sections, basePath }) => {
 
 
     const activeContent = useMemo(() => {
-        // Since sections are now nested (categories -> subtopics), we need to flatten them to find the topic
         const allTopics = sections.flatMap(section => section.subtopics || []);
         return allTopics.find(s => s.id === topicId);
     }, [topicId, sections]);
@@ -32,8 +31,12 @@ const TopicLayout = ({ title, sections, basePath }) => {
                     <div className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4">
                         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                             <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                <activeContent.icon className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
-                                {activeContent.title}
+                                <div className={`p-1.5 rounded-lg ${activeContent.color ? `bg-gradient-to-br ${activeContent.color} text-white` : 'text-indigo-600 dark:text-indigo-400'}`}>
+                                    <activeContent.icon className="w-6 h-6" />
+                                </div>
+                                <span className={activeContent.color ? `bg-gradient-to-r ${activeContent.color} bg-clip-text text-transparent` : ''}>
+                                    {activeContent.title}
+                                </span>
                             </h2>
                             <div className="flex gap-2">
                                 {['theory', 'demo', 'split'].map((mode) => (
@@ -55,13 +58,11 @@ const TopicLayout = ({ title, sections, basePath }) => {
 
                         {(viewMode === 'theory' || viewMode === 'split') && (
                             <div className="p-6 space-y-6 overflow-auto max-h-[800px] bg-white dark:bg-gray-900">
-                                {/* 1. Overview */}
                                 <div>
                                     <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 border-b dark:border-gray-700 pb-2">📖 Overview</h3>
                                     <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{activeContent.theory.overview}</p>
                                 </div>
 
-                                {/* 2. Definition */}
                                 {activeContent.theory.definition && (
                                     <div>
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 border-b dark:border-gray-700 pb-2">📚 Definition</h3>
@@ -71,7 +72,6 @@ const TopicLayout = ({ title, sections, basePath }) => {
                                     </div>
                                 )}
 
-                                {/* 3. Syntax */}
                                 <div>
                                     <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 border-b dark:border-gray-700 pb-2">💻 Syntax</h3>
                                     <pre className="bg-slate-900 text-slate-50 p-4 rounded-lg text-sm overflow-x-auto font-mono custom-scrollbar border border-slate-700">
@@ -79,7 +79,6 @@ const TopicLayout = ({ title, sections, basePath }) => {
                                     </pre>
                                 </div>
 
-                                {/* 4. Real-life Scenario */}
                                 {activeContent.theory.realLifeScenario && (
                                     <div>
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 border-b dark:border-gray-700 pb-2">🌍 Real-life Scenario</h3>
@@ -89,7 +88,6 @@ const TopicLayout = ({ title, sections, basePath }) => {
                                     </div>
                                 )}
 
-                                {/* 5. Pros and Cons */}
                                 {(activeContent.theory.pros || activeContent.theory.cons) && (
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {activeContent.theory.pros && (
@@ -125,11 +123,9 @@ const TopicLayout = ({ title, sections, basePath }) => {
                                     </div>
                                 )}
 
-                                {/* 6. Others / Details */}
                                 <div>
                                     <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 border-b dark:border-gray-700 pb-2">🔍 Details & Tips</h3>
 
-                                    {/* When to Use (Merged into Details if not replaced by Scenario) */}
                                     {activeContent.theory.whenToUse && (
                                         <div className="mb-6">
                                             <h4 className="text-gray-800 dark:text-gray-200 font-semibold mb-2">When to Use:</h4>
@@ -144,7 +140,6 @@ const TopicLayout = ({ title, sections, basePath }) => {
                                         </div>
                                     )}
 
-                                    {/* Tips */}
                                     {activeContent.theory.tips && (
                                         <div className="space-y-2 mb-6">
                                             {activeContent.theory.tips.map((tip, idx) => (
@@ -156,7 +151,6 @@ const TopicLayout = ({ title, sections, basePath }) => {
                                         </div>
                                     )}
 
-                                    {/* Deep Dive */}
                                     {activeContent.theory.deepDive && (
                                         <div className="mb-6">
                                             <h4 className="text-gray-800 dark:text-gray-200 font-semibold mb-2">Deep Dive:</h4>
@@ -166,7 +160,6 @@ const TopicLayout = ({ title, sections, basePath }) => {
                                         </div>
                                     )}
 
-                                    {/* Pitfalls */}
                                     {activeContent.theory.commonPitfalls && (
                                         <div>
                                             <h4 className="text-gray-800 dark:text-gray-200 font-semibold mb-2">Common Pitfalls:</h4>

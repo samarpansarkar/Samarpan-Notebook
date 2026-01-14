@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { useState, useRef, useLayoutEffect, useEffect } from 'react';
 
 const BoxWithLayoutEffect = ({ onReset }) => {
@@ -41,7 +40,7 @@ const BoxWithUseEffect = ({ onReset }) => {
 
 const UseLayoutEffectDemo = () => {
     const [isLayoutEffect, setIsLayoutEffect] = useState(true);
-    const [key, setKey] = useState(0); // Force remount to reset
+    const [key, setKey] = useState(0);
 
     const handleReset = () => {
         setKey(k => k + 1);

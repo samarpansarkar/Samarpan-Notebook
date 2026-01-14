@@ -5,11 +5,9 @@ import { useTopics } from '@/context/TopicContext';
 const SubjectPage = ({ subject }) => {
     const { getTopicsBySubject, loading, error } = useTopics();
 
-    // Get topics for this subject
-    const sections = getTopicsBySubject(subject.path.replace('/', '') || subject.name.toLowerCase()); // e.g. 'react'
+    const sections = getTopicsBySubject(subject.path.replace('/', '') || subject.name.toLowerCase());
 
     if (loading) return <div>Loading content...</div>;
-    // if (error) return <div>Error: {error}</div>;
 
     return (
         <TopicLayout

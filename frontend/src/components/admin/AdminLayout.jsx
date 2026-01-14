@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, PlusCircle, LogOut, BookOpen } from 'lucide-react';
+import { LayoutDashboard, PlusCircle, LogOut, BookOpen, Layers } from 'lucide-react';
 
 const AdminLayout = () => {
     const navigate = useNavigate();
@@ -27,7 +27,6 @@ const AdminLayout = () => {
 
     return (
         <div className="min-h-screen bg-gray-900 flex text-gray-100">
-            {/* Sidebar */}
             <aside className="w-64 bg-gray-800 border-r border-gray-700 flex flex-col">
                 <div className="p-6 border-b border-gray-700">
                     <h1 className="text-xl font-bold text-white flex items-center gap-2">
@@ -60,6 +59,17 @@ const AdminLayout = () => {
                     </Link>
 
                     <Link
+                        to="/admin/topics"
+                        className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/admin/topics')
+                            ? 'bg-indigo-600 text-white'
+                            : 'text-gray-400 hover:bg-gray-700 hover:text-white'
+                            }`}
+                    >
+                        <Layers size={20} />
+                        Topics
+                    </Link>
+
+                    <Link
                         to="/admin/topic/new"
                         className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/admin/topic/new')
                             ? 'bg-indigo-600 text-white'
@@ -67,7 +77,7 @@ const AdminLayout = () => {
                             }`}
                     >
                         <PlusCircle size={20} />
-                        Add Topic
+                        Add Theory & Practical
                     </Link>
 
                     <div className="border-t border-gray-700 my-4 pt-4">
@@ -93,7 +103,6 @@ const AdminLayout = () => {
                 </div>
             </aside>
 
-            {/* Main Content */}
             <main className="flex-1 overflow-auto bg-gray-900">
                 <div className="p-8">
                     <Outlet />

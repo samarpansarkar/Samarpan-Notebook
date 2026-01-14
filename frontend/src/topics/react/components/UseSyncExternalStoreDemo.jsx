@@ -1,7 +1,6 @@
 
 import { useSyncExternalStore } from 'react';
 
-// 1. Define the external store (browser network state)
 function subscribe(callback) {
     window.addEventListener('online', callback);
     window.addEventListener('offline', callback);
@@ -16,7 +15,7 @@ function getSnapshot() {
 }
 
 function getServerSnapshot() {
-    return true; // Always online on server
+    return true;
 }
 
 const UseSyncExternalStoreDemo = () => {

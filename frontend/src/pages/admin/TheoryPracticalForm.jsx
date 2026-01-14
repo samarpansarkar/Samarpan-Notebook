@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import api from '../../api/client';
+import api from '@/api/client';
 import { Save, ArrowLeft, Plus, Trash } from 'lucide-react';
-import { iconRegistry, componentRegistry } from '../../utils/componentRegistry';
-import { useTopics } from '../../context/TopicContext';
-import { useSubjects } from '../../context/SubjectContext';
+import { iconRegistry, componentRegistry } from '@/utils/componentRegistry';
+import { useTopics } from '@/context/TopicContext';
+import { useSubjects } from '@/context/SubjectContext';
 
-const TopicForm = () => {
+const TheoryPracticalForm = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { refreshTopics } = useTopics();
@@ -19,13 +19,15 @@ const TopicForm = () => {
     const [formData, setFormData] = useState({
         topicId: '',
         title: '',
-        category: 'core',
+        level: 'beginner',
         section: 'hooks',
-        subject: 'react', // default
+        subject: 'react',
         icon: 'Box',
         description: '',
         componentKey: '',
-        liveCode: '', // New field for live coding
+        liveCode: '',
+        order: 0,
+        sectionOrder: 0,
         theory: {
             overview: '',
             definition: '',
@@ -42,22 +44,34 @@ const TopicForm = () => {
 
     useEffect(() => {
         if (!isEdit && subjects.length > 0) {
-            // Default to first subject if creating new
-            // But we only want to do this if we haven't touched it, or maybe strictly on mount?
-            // Actually, formData.subject has a default 'react', we should probably override it
-            // with the first available subject if 'react' isn't in the list?
-            // For now, let's trust the user to pick, or default to the first one.
             const firstSubject = subjects[0].path.replace('/', '');
             setFormData(prev => ({ ...prev, subject: firstSubject }));
         }
     }, [subjects, isEdit]);
 
+    const [availableTopics, setAvailableTopics] = useState([]);
+
+    useEffect(() => {
+        const fetchTopics = async () => {
+            try {
+                const { data } = await api.get('/topics');
+                setAvailableTopics(data);
+            } catch (err) {
+                console.error("Failed to fetch topics", err);
+            }
+        };
+        fetchTopics();
+    }, []);
+
+    const filteredTopics = availableTopics.filter(
+        t => t.subject === formData.subject
+    );
+
     useEffect(() => {
         if (isEdit) {
             const fetchTopic = async () => {
                 try {
-                    const { data } = await api.get(`/topics/${id}`);
-                    // Ensure arrays are initialized if missing from DB
+                    const { data } = await api.get(`/theory/${id}`);
                     const theory = {
                         ...data.theory,
                         pros: data.theory.pros?.length ? data.theory.pros : [''],
@@ -74,6 +88,16 @@ const TopicForm = () => {
             fetchTopic();
         }
     }, [id, isEdit]);
+
+    useEffect(() => {
+        if (!isEdit && formData.title) {
+            const generatedId = formData.title
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/(^-|-$)/g, '');
+            setFormData(prev => ({ ...prev, topicId: generatedId }));
+        }
+    }, [formData.title, isEdit]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -135,11 +159,11 @@ const TopicForm = () => {
 
         try {
             if (isEdit) {
-                await api.put(`/topics/${id}`, formData);
+                await api.put(`/theory/${id}`, formData);
             } else {
-                await api.post('/topics', formData);
+                await api.post('/theory', formData);
             }
-            await refreshTopics(); // Update global state
+            await refreshTopics();
             navigate('/admin/dashboard');
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to save topic');
@@ -152,7 +176,7 @@ const TopicForm = () => {
         <div className="max-w-4xl mx-auto">
             <div className="flex items-center justify-between mb-8">
                 <h2 className="text-2xl font-bold text-white">
-                    {isEdit ? `Edit Topic: ${id}` : 'Create New Topic'}
+                    {isEdit ? `Edit Content: ${id}` : 'Add Theory & Practical'}
                 </h2>
                 <button
                     type="button"
@@ -171,21 +195,9 @@ const TopicForm = () => {
 
             <form onSubmit={handleSubmit} className="space-y-8 bg-gray-800 p-8 rounded-lg border border-gray-700">
 
-                {/* Basic Info */}
                 <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-indigo-400 border-b border-gray-700 pb-2">Basic Info</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm text-gray-400 mb-1">Topic ID (URL Slug)</label>
-                            <input
-                                type="text"
-                                name="topicId"
-                                value={formData.topicId}
-                                onChange={handleChange}
-                                className="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"
-                                required
-                            />
-                        </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label className="block text-sm text-gray-400 mb-1">Title</label>
                             <input
@@ -193,7 +205,22 @@ const TopicForm = () => {
                                 name="title"
                                 value={formData.title}
                                 onChange={handleChange}
-                                className="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"
+                                className="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-indigo-500 focus:outline-none"
+                                placeholder="e.g. useEffect Hook"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="text-sm text-gray-400 mb-1 group flex items-center gap-2">
+                                Content ID (URL Slug)
+                                <span className="text-xs bg-gray-600 px-1.5 rounded text-gray-300">Auto-generated</span>
+                            </label>
+                            <input
+                                type="text"
+                                name="topicId"
+                                value={formData.topicId}
+                                onChange={handleChange}
+                                className="w-full bg-gray-700 border border-gray-600 rounded p-2 text-gray-400 font-mono text-sm focus:border-indigo-500 focus:outline-none"
                                 required
                             />
                         </div>
@@ -203,39 +230,73 @@ const TopicForm = () => {
                                 name="subject"
                                 value={formData.subject}
                                 onChange={handleChange}
-                                className="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"
+                                className="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-indigo-500 focus:outline-none"
                                 required
                             >
                                 {subjects.map(sub => (
-                                    <option key={sub.path} value={sub.path.replace('/', '')}>{sub.name}</option>
+                                    <option key={sub.path} value={sub.path.replace('/', '')}>{sub.title} ({sub.name})</option>
                                 ))}
                             </select>
                         </div>
+
                         <div>
-                            <label className="block text-sm text-gray-400 mb-1">Category (e.g. core, advanced)</label>
-                            <input
-                                type="text"
-                                name="category"
-                                value={formData.category}
-                                onChange={handleChange}
-                                className="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"
-                                required
-                            />
+                            <label className="block text-sm text-gray-400 mb-1">Topic (Group)</label>
+                            <div className="flex gap-2">
+                                <select
+                                    name="section"
+                                    value={formData.section}
+                                    onChange={handleChange}
+                                    className="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-indigo-500 focus:outline-none"
+                                    required
+                                >
+                                    <option value="">Select a Topic</option>
+                                    {filteredTopics.map(topic => (
+                                        <option key={topic._id} value={topic.topicId}>
+                                            {topic.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                <button
+                                    type="button"
+                                    onClick={() => navigate('/admin/topics/new')}
+                                    className="bg-gray-700 hover:bg-gray-600 p-2 rounded text-white transition-colors border border-gray-600"
+                                    title="Create New Topic"
+                                >
+                                    <Plus size={20} />
+                                </button>
+                            </div>
+                            {filteredTopics.length === 0 && (
+                                <p className="text-xs text-yellow-500 mt-1 flex items-center gap-1">
+                                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-yellow-500"></span>
+                                    No topics found for this subject. Please create a topic first.
+                                </p>
+                            )}
                         </div>
                         <div>
-                            <label className="block text-sm text-gray-400 mb-1">Section (Group)</label>
+                            <label className="block text-sm text-gray-400 mb-1">Level</label>
                             <select
-                                name="section"
-                                value={formData.section}
+                                name="level"
+                                value={formData.level}
+                                onChange={handleChange}
+                                className="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-indigo-500 focus:outline-none"
+                                required
+                            >
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="hard">Hard</option>
+                                <option value="expert">Expert</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-sm text-gray-400 mb-1">Section Order</label>
+                            <input
+                                type="number"
+                                name="sectionOrder"
+                                value={formData.sectionOrder}
                                 onChange={handleChange}
                                 className="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"
-                            >
-                                <option value="hooks">Hooks</option>
-                                <option value="concepts">Concepts</option>
-                                {/* We could also fetch distinct sections from DB or allow generic input */}
-                                <option value="general">General</option>
-                                <option value="advanced">Advanced</option>
-                            </select>
+                                placeholder="0"
+                            />
                         </div>
                         <div>
                             <label className="block text-sm text-gray-400 mb-1">Icon (Lucide Name)</label>
@@ -265,6 +326,17 @@ const TopicForm = () => {
                                 ))}
                             </select>
                         </div>
+                        <div>
+                            <label className="block text-sm text-gray-400 mb-1">Order (Sort Priority)</label>
+                            <input
+                                type="number"
+                                name="order"
+                                value={formData.order}
+                                onChange={handleChange}
+                                className="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"
+                                placeholder="0"
+                            />
+                        </div>
                     </div>
 
                     <div>
@@ -293,8 +365,6 @@ const TopicForm = () => {
                     </div>
                 </div>
 
-
-                {/* Theory Content */}
                 <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-indigo-400 border-b border-gray-700 pb-2">Theory Content</h3>
 
@@ -312,7 +382,6 @@ const TopicForm = () => {
                         ))}
                     </div>
 
-                    {/* Arrays: Pros, Cons, etc */}
                     {['pros', 'cons', 'whenToUse', 'tips', 'commonPitfalls'].map(field => (
                         <div key={field} className="space-y-2">
                             <label className="block text-sm text-gray-400 font-bold capitalize">{field.replace(/([A-Z])/g, ' $1').trim()}</label>
@@ -352,7 +421,7 @@ const TopicForm = () => {
                         className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-medium flex items-center gap-2 disabled:opacity-50"
                     >
                         <Save size={20} />
-                        {loading ? 'Saving...' : 'Save Topic'}
+                        {loading ? 'Saving...' : 'Save Content'}
                     </button>
                 </div>
 
@@ -361,4 +430,4 @@ const TopicForm = () => {
     );
 };
 
-export default TopicForm;
+export default TheoryPracticalForm;

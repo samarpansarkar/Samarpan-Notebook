@@ -2,7 +2,7 @@ const request = require("supertest");
 const mongoose = require("mongoose");
 const app = require("../server");
 const User = require("../models/User");
-const Topic = require("../models/Topic");
+const Theory = require("../models/Theory");
 
 let token;
 
@@ -25,13 +25,13 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await User.deleteMany({});
-  await Topic.deleteMany({});
+  await Theory.deleteMany({});
   await mongoose.connection.close();
 });
 
-describe("Topic Routes", () => {
+describe("GET /api/theory", () => {
   it("should filter topics by subject", async () => {
-    await Topic.create({
+    await Theory.create({
       topicId: "react-hooks",
       title: "React Hooks",
       category: "core",
@@ -39,7 +39,7 @@ describe("Topic Routes", () => {
       subject: "react",
     });
 
-    await Topic.create({
+    await Theory.create({
       topicId: "js-async",
       title: "Async JS",
       category: "core",
@@ -48,20 +48,20 @@ describe("Topic Routes", () => {
     });
 
     // Test filtering for React
-    const resReact = await request(app).get("/api/topics?subject=react");
+    const resReact = await request(app).get("/api/theory?subject=react");
     expect(resReact.statusCode).toBe(200);
     expect(resReact.body.length).toBe(1);
     expect(resReact.body[0].subject).toBe("react");
 
     // Test filtering for JS
-    const resKS = await request(app).get("/api/topics?subject=js");
+    const resKS = await request(app).get("/api/theory?subject=js");
     expect(resKS.statusCode).toBe(200);
     expect(resKS.body.length).toBe(1);
     expect(resKS.body[0].subject).toBe("js");
   });
 
-  it("should update topic by ID", async () => {
-    const topic = await Topic.create({
+  it("should update theory by ID", async () => {
+    const topic = await Theory.create({
       topicId: "update-test",
       title: "Original Title",
       category: "test",
@@ -69,7 +69,7 @@ describe("Topic Routes", () => {
     });
 
     const res = await request(app)
-      .put(`/api/topics/${topic._id}`)
+      .put(`/api/theory/${topic._id}`)
       .set("Authorization", `Bearer ${token}`)
       .send({
         title: "Updated Title",

@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { useState, useRef, useImperativeHandle, forwardRef } from 'react';
 
 const CustomInput = forwardRef((props, ref) => {
@@ -12,8 +11,6 @@ const CustomInput = forwardRef((props, ref) => {
             inputRef.current.value = '';
             inputRef.current.focus();
         },
-        // We strictly limit what the parent can do. 
-        // They CANNOT access inputRef.current.style, for example.
     }));
 
     return (

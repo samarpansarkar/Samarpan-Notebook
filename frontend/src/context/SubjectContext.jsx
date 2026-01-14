@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import api from '../api/client';
-import { getIcon } from '../utils/componentRegistry';
+import api from '@/api/client';
+import { getIcon } from '@/utils/componentRegistry';
 
 const SubjectContext = createContext();
 
@@ -25,7 +25,6 @@ export const SubjectProvider = ({ children }) => {
             setLoading(false);
         } catch (err) {
             console.error("Failed to fetch subjects:", err);
-            // Fallback used in dev/test if backend offline?
             setSubjects([]);
             setError(err.message);
             setLoading(false);

@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require("express"); // Entry point
 const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./config/db");
@@ -22,6 +22,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/subjects", require("./routes/subjectRoutes"));
 app.use("/api/topics", require("./routes/topicRoutes"));
+app.use("/api/theory", require("./routes/theoryRoutes"));
 
 const PORT = process.env.PORT || 5000;
 

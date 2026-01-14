@@ -1,12 +1,7 @@
 /* eslint-disable */
 import { useState, useEffect } from 'react';
 
-// --- The Custom Hook ---
-// 1. Starts with 'use'
-// 2. Uses other hooks
-// 3. Encapsulates logic
 function useLocalStorage(key, initialValue) {
-    // Get from local storage then parse stored json or return initialValue
     const readValue = () => {
         if (typeof window === 'undefined') {
             return initialValue;
@@ -22,11 +17,8 @@ function useLocalStorage(key, initialValue) {
 
     const [storedValue, setStoredValue] = useState(readValue);
 
-    // Return a wrapped version of useState's setter function that ...
-    // ... persists the new value to localStorage.
     const setValue = (value) => {
         try {
-            // Allow value to be a function so we have same API as useState
             const valueToStore = value instanceof Function ? value(storedValue) : value;
 
             setStoredValue(valueToStore);
@@ -43,7 +35,6 @@ function useLocalStorage(key, initialValue) {
 }
 
 const CustomHooksDemo = () => {
-    // Usage of custom hook
     const [name, setName] = useLocalStorage('demo-username', 'Guest');
     const [theme, setTheme] = useLocalStorage('demo-theme', 'light');
 

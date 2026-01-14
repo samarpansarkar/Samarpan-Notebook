@@ -1,19 +1,14 @@
-/* eslint-disable */
 import { useInsertionEffect, useEffect, useState, useLayoutEffect } from 'react';
 
 const UseInsertionEffectDemo = () => {
     const [logs, setLogs] = useState([]);
 
     const addLog = (msg) => {
-        // We use a functional update to avoid dependency cycles for this demo
         setLogs(prev => [...prev, `${new Date().toLocaleTimeString().split(' ')[0]}: ${msg}`]);
         console.log(msg);
     };
 
     useInsertionEffect(() => {
-        // This runs BEFORE DOM mutations. 
-        // You cannot access refs here reliably.
-        // It's strictly for injecting dynamic CSS (like styled-components).
         console.log('1. useInsertionEffect running (Inject styles here)');
     }, []);
 

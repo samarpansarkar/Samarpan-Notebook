@@ -4,7 +4,6 @@ const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
     const [theme, setTheme] = useState(() => {
-        // Check local storage or system preference
         if (typeof window !== 'undefined' && window.localStorage) {
             const storedTheme = window.localStorage.getItem('theme');
             if (storedTheme) {
@@ -20,18 +19,14 @@ export const ThemeProvider = ({ children }) => {
     useEffect(() => {
         const root = window.document.documentElement;
 
-        // Remove previous class
         root.classList.remove('light', 'dark');
 
-        // Add current theme class
         root.classList.add(theme);
 
-        // Save to local storage
         localStorage.setItem('theme', theme);
     }, [theme]);
 
     const toggleTheme = () => {
-        console.log('Toggling theme. Current:', theme);
         setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
     };
 

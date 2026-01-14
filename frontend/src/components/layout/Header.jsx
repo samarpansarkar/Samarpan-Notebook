@@ -13,7 +13,7 @@ const Header = ({ toggleSidebar }) => {
     const navItems = subjects.map(sub => ({
         path: sub.path,
         label: sub.name,
-        icon: sub.iconComponent || BookOpen, // Fallback
+        icon: sub.iconComponent || BookOpen,
         color: sub.color
     }));
 
@@ -21,7 +21,6 @@ const Header = ({ toggleSidebar }) => {
         <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-30 transition-colors duration-200">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16">
-                    {/* Logo and Mobile Menu Button */}
                     <div className="flex items-center gap-4">
                         <button
                             onClick={toggleSidebar}
@@ -35,7 +34,6 @@ const Header = ({ toggleSidebar }) => {
                         </Link>
                     </div>
 
-                    {/* Desktop Navigation */}
                     <div className="hidden md:flex items-center gap-4">
                         <nav className="flex space-x-4 items-center">
                             <Link
@@ -62,7 +60,6 @@ const Header = ({ toggleSidebar }) => {
                             ))}
                         </nav>
 
-                        {/* Theme Toggle Button */}
                         <button
                             onClick={toggleTheme}
                             className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
@@ -76,7 +73,6 @@ const Header = ({ toggleSidebar }) => {
                         </button>
                     </div>
 
-                    {/* Mobile Menu Button & Theme Toggle for Mobile */}
                     <div className="flex items-center gap-2 md:hidden">
                         <button
                             onClick={toggleTheme}
@@ -103,7 +99,6 @@ const Header = ({ toggleSidebar }) => {
                 </div>
             </div>
 
-            {/* Mobile Navigation Menu */}
             {isMenuOpen && (
                 <div className="md:hidden bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
                     <div className="pt-2 pb-3 space-y-1 px-2">
