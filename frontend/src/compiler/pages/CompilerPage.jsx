@@ -5,7 +5,7 @@ import OutputConsole from '../components/OutputConsole';
 import { executeCode } from '../utils/executor';
 
 const CompilerPage = () => {
-    const [code, setCode] = useState('// Write your JavaScript code here\nconsole.log("Hello, World!");\n');
+    const [code, setCode] = useState('// Dev by Samarpan\n// Write your JavaScript code here\nconsole.log("Hello, World!");\n');
     const [logs, setLogs] = useState([]);
     const [isRunning, setIsRunning] = useState(false);
 
@@ -28,10 +28,8 @@ const CompilerPage = () => {
     };
 
     const handleResetCode = () => {
-        if (confirm('Are you sure you want to reset the code?')) {
-            setCode('// Write your JavaScript code here\nconsole.log("Hello, World!");\n');
-            setLogs([]);
-        }
+        setCode('// Dev by Samarpan\n// Write your JavaScript code here\nconsole.log("Hello, World!");\n');
+        setLogs([]);
     };
 
     return (
