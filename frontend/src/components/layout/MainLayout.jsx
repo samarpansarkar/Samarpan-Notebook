@@ -8,7 +8,7 @@ import { selectAllSubjects } from '@/store/slices/subjectSlice';
 
 const MainLayout = () => {
     const location = useLocation();
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(true); // Default open on desktop
     const subjects = useSelector(selectAllSubjects);
     // Note: getTopicsBySubject was a function in Context. In Redux, we use a selector.
     // However, the selector needs the state AND the subjectKey.
@@ -54,6 +54,7 @@ const MainLayout = () => {
                     <Sidebar
                         isOpen={sidebarOpen}
                         closeSidebar={() => setSidebarOpen(false)}
+                        toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
                         title={sidebarConfig.title}
                         basePath={sidebarConfig.basePath}
                         sections={sidebarConfig.sections}
@@ -61,8 +62,11 @@ const MainLayout = () => {
                 )}
 
                 <main
-                    className={`flex-1 p-4 md:p-8 transition-all duration-200 dark:text-gray-100 ${currentSubject ? 'md:ml-64' : ''
-                        }`}
+                    className={`flex-1 p-4 md:p-8 transition-all duration-300 dark:text-gray-100`}
+                    style={{
+                        marginLeft: currentSubject && sidebarOpen ? '256px' : '0',
+                        transition: 'margin-left 0.3s ease-in-out'
+                    }}
                 >
                     <Outlet />
                 </main>

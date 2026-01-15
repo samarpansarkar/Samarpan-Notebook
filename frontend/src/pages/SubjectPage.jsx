@@ -9,7 +9,18 @@ const SubjectPage = ({ subject }) => {
         selectTopicsBySubject(state, subject.path.replace('/', '') || subject.name.toLowerCase())
     );
 
-    if (loading) return <div>Loading content...</div>;
+    if (loading) return (
+        <div className="flex items-center justify-center h-screen">
+            <div className="text-center">
+                <div className="dots-loading mb-4">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <p style={{ color: 'var(--color-text-secondary)' }}>Loading content...</p>
+            </div>
+        </div>
+    );
 
     return (
         <TopicLayout
