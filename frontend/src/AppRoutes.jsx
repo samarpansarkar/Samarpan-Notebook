@@ -14,6 +14,7 @@ const AdminTopics = lazy(() => import('@/pages/admin/AdminTopics'));
 const AdminSubjects = lazy(() => import('@/pages/admin/AdminSubjects'));
 const AdminTheories = lazy(() => import('@/pages/admin/AdminTheories'));
 const SubjectForm = lazy(() => import('@/pages/admin/SubjectForm'));
+const CompilerPage = lazy(() => import('@/compiler/pages/CompilerPage'));
 
 const PageLoader = () => (
     <div className="flex items-center justify-center h-full min-h-[50vh]">
@@ -95,6 +96,15 @@ const AppRoutes = () => {
                     element={
                         <Suspense fallback={<PageLoader />}>
                             <HomePage />
+                        </Suspense>
+                    }
+                />
+
+                <Route
+                    path="compiler"
+                    element={
+                        <Suspense fallback={<PageLoader />}>
+                            <CompilerPage />
                         </Suspense>
                     }
                 />

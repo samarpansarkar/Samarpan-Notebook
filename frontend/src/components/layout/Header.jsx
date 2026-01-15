@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { BookOpen, Menu, X, Sun, Moon } from 'lucide-react';
+import { BookOpen, Menu, X, Sun, Moon, Terminal } from 'lucide-react';
 import { useState } from 'react';
 import { useTheme } from '@/context/ThemeContext';
 import { useSubjects } from '@/context/SubjectContext';
@@ -45,6 +45,16 @@ const Header = ({ toggleSidebar }) => {
                                     }`}
                             >
                                 Home
+                            </Link>
+                            <Link
+                                to="/compiler"
+                                className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${location.pathname === '/compiler'
+                                    ? 'text-indigo-700 bg-indigo-50 dark:bg-indigo-900/20 dark:text-indigo-300'
+                                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800'
+                                    }`}
+                            >
+                                <Terminal className="w-4 h-4" />
+                                <span>Compiler</span>
                             </Link>
                             {navItems.map((item) => (
                                 <Link
@@ -120,6 +130,17 @@ const Header = ({ toggleSidebar }) => {
                                 }`}
                         >
                             Home
+                        </Link>
+                        <Link
+                            to="/compiler"
+                            onClick={() => setIsMenuOpen(false)}
+                            className={`flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium ${location.pathname === '/compiler'
+                                ? 'text-indigo-700 bg-indigo-50 dark:bg-indigo-900/20 dark:text-indigo-300'
+                                : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800'
+                                }`}
+                        >
+                            <Terminal className="w-5 h-5" />
+                            <span>Compiler</span>
                         </Link>
                         {navItems.map((item) => (
                             <Link
