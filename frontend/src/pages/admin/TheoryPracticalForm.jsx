@@ -3,14 +3,15 @@ import { useNavigate, useParams } from 'react-router-dom';
 import api from '@/api/client';
 import { Save, ArrowLeft, Plus, Trash } from 'lucide-react';
 import { iconRegistry } from '@/utils/componentRegistry';
-import { useTopics } from '@/context/TopicContext';
-import { useSubjects } from '@/context/SubjectContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchTopicsAndTheories } from '@/store/slices/topicSlice';
+import { selectAllSubjects } from '@/store/slices/subjectSlice';
 
 const TheoryPracticalForm = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { refreshTopics } = useTopics();
-    const { subjects } = useSubjects();
+    const dispatch = useDispatch();
+    const subjects = useSelector(selectAllSubjects);
     const isEdit = !!id;
 
     const [loading, setLoading] = useState(false);
@@ -163,7 +164,7 @@ const TheoryPracticalForm = () => {
             } else {
                 await api.post('/theory', formData);
             }
-            await refreshTopics();
+            dispatch(fetchTopicsAndTheories());
             navigate('/admin/dashboard');
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to save topic');

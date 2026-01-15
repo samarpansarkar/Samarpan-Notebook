@@ -17,15 +17,16 @@ vi.mock('../api/client', () => {
     }
 });
 
-import { ThemeProvider } from '@/context/ThemeContext';
+import { Provider } from 'react-redux';
+import { store } from '@/store/store';
 
 describe('App', () => {
     it('renders without crashing', async () => {
-        // Wrap with ThemeProvider as MainLayout uses it
+        // Wrap with Redux Provider
         const { container } = render(
-            <ThemeProvider>
+            <Provider store={store}>
                 <App />
-            </ThemeProvider>
+            </Provider>
         );
         expect(container).toBeDefined();
     });

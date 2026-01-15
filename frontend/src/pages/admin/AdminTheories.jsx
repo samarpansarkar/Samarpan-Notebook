@@ -1,12 +1,13 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import api from '@/api/client';
-import { useSubjects } from '@/context/SubjectContext';
+import { useSelector } from 'react-redux';
+import { selectAllSubjects } from '@/store/slices/subjectSlice';
 import { Edit, Trash2, Plus, BookOpen, FileText, Filter } from 'lucide-react';
 import Modal from '@/components/common/Modal';
 
 const AdminTheories = () => {
-    const { subjects } = useSubjects();
+    const subjects = useSelector(selectAllSubjects);
     const [theories, setTheories] = useState([]);
     const [topics, setTopics] = useState([]);
     const [loading, setLoading] = useState(true);

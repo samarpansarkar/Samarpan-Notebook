@@ -1,41 +1,21 @@
 import { Link } from 'react-router-dom';
 import { BookOpen, Code, FileCode, Layers, Zap, ArrowRight } from 'lucide-react';
+import { useSelector } from 'react-redux';
+import { selectAllSubjects } from '@/store/slices/subjectSlice';
+import { getIcon } from '@/utils/componentRegistry';
 
 const HomePage = () => {
-    const topics = [
-        {
-            path: '/react',
-            title: 'React Optimization',
-            desc: 'Master hooks, performance, and advanced patterns.',
-            icon: Zap,
-            color: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400',
-            count: '10+ Modules'
-        },
-        {
-            path: '/js',
-            title: 'JavaScript Core',
-            desc: 'Deep dive into closures, async/await, and prototypes.',
-            icon: Code,
-            color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400',
-            count: 'Coming Soon'
-        },
-        {
-            path: '/html-css',
-            title: 'Modern HTML & CSS',
-            desc: 'Flexbox, Grid, semantic HTML, and accessibility.',
-            icon: Layers,
-            color: 'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400',
-            count: 'Coming Soon'
-        },
-        {
-            path: '/ts',
-            title: 'TypeScript',
-            desc: 'Strict typing, interfaces, and generics.',
-            icon: FileCode,
-            color: 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300',
-            count: 'Coming Soon'
-        },
-    ];
+    const subjects = useSelector(selectAllSubjects);
+
+    // Map Redux subjects to the display format used in HomePage
+    const topics = subjects.map(sub => ({
+        path: sub.path,
+        title: sub.title || sub.name,
+        desc: sub.desc || 'Start learning ' + sub.name,
+        icon: sub.iconComponent || getIcon('Code'), // Fallback
+        color: sub.color || 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
+        count: 'Explore' // Dynamic count not yet available in subject model, placeholder
+    }));
 
     return (
         <div className="max-w-6xl mx-auto">

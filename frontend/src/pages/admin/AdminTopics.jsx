@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '@/api/client';
-import { useSubjects } from '@/context/SubjectContext';
+import { useSelector } from 'react-redux';
+import { selectAllSubjects } from '@/store/slices/subjectSlice';
 import { Edit, Trash2, Plus, Layers } from 'lucide-react';
 import Modal from '@/components/common/Modal';
 
 
 const AdminTopics = () => {
-    const { subjects } = useSubjects();
+    const subjects = useSelector(selectAllSubjects);
     const [topics, setTopics] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');

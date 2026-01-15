@@ -1,8 +1,8 @@
 import Editor from '@monaco-editor/react';
-import { useTheme } from '@/context/ThemeContext';
+import { useSelector } from 'react-redux';
 
 const CodeEditor = ({ code, onChange }) => {
-    const { theme } = useTheme();
+    const theme = useSelector((state) => state.theme.mode);
 
     const handleEditorChange = (value) => {
         onChange(value);

@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import api from '@/api/client';
 import { Save, ArrowLeft, HelpCircle } from 'lucide-react';
-import { useSubjects } from '@/context/SubjectContext';
+import { useSelector } from 'react-redux';
+import { selectAllSubjects } from '@/store/slices/subjectSlice';
 import GradientPicker from '@/components/admin/GradientPicker';
 
 const AdminTopicForm = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { subjects } = useSubjects();
+    const subjects = useSelector(selectAllSubjects);
     const isEdit = !!id;
 
     const [loading, setLoading] = useState(false);

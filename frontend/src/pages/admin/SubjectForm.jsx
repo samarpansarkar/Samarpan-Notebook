@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '@/api/client';
 import { Save, ArrowLeft } from 'lucide-react';
-import { useSubjects } from '@/context/SubjectContext';
+import { useDispatch } from 'react-redux';
+import { fetchSubjects } from '@/store/slices/subjectSlice';
 import GradientPicker from '@/components/admin/GradientPicker';
 
 const SubjectForm = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { refreshSubjects } = useSubjects();
+    const dispatch = useDispatch();
     const isEdit = !!id;
 
     const [loading, setLoading] = useState(false);
@@ -61,7 +62,7 @@ const SubjectForm = () => {
             } else {
                 await api.post('/subjects', formData);
             }
-            await refreshSubjects();
+            dispatch(fetchSubjects());
             navigate('/admin/subjects');
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to save subject');

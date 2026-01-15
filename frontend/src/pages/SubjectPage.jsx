@@ -1,11 +1,13 @@
-import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import TopicLayout from '@/components/layout/TopicLayout';
-import { useTopics } from '@/context/TopicContext';
+import { selectTopicsBySubject } from '@/store/slices/topicSlice';
 
 const SubjectPage = ({ subject }) => {
-    const { getTopicsBySubject, loading, error } = useTopics();
-
-    const sections = getTopicsBySubject(subject.path.replace('/', '') || subject.name.toLowerCase());
+    const loading = useSelector(state => state.topics.status === 'loading');
+    // Error handling can use state.topics.error if needed
+    const sections = useSelector(state =>
+        selectTopicsBySubject(state, subject.path.replace('/', '') || subject.name.toLowerCase())
+    );
 
     if (loading) return <div>Loading content...</div>;
 

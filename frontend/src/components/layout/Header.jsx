@@ -1,15 +1,21 @@
 import { Link, useLocation } from 'react-router-dom';
 import { BookOpen, Menu, X, Sun, Moon, Terminal } from 'lucide-react';
 import { useState } from 'react';
-import { useTheme } from '@/context/ThemeContext';
-import { useSubjects } from '@/context/SubjectContext';
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleTheme } from '@/store/slices/themeSlice';
+import { selectAllSubjects } from '@/store/slices/subjectSlice';
 import Search from './Search';
 
 const Header = ({ toggleSidebar }) => {
     const location = useLocation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const { theme, toggleTheme } = useTheme();
-    const { subjects } = useSubjects();
+    const dispatch = useDispatch();
+    const theme = useSelector((state) => state.theme.mode);
+    const subjects = useSelector(selectAllSubjects);
+
+    const handleToggleTheme = () => {
+        dispatch(toggleTheme());
+    };
 
     const navItems = subjects.map(sub => ({
         path: sub.path,
@@ -76,7 +82,7 @@ const Header = ({ toggleSidebar }) => {
                         </div>
 
                         <button
-                            onClick={toggleTheme}
+                            onClick={handleToggleTheme}
                             className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                             aria-label="Toggle Theme"
                         >
@@ -90,7 +96,7 @@ const Header = ({ toggleSidebar }) => {
 
                     <div className="flex items-center gap-2 md:hidden">
                         <button
-                            onClick={toggleTheme}
+                            onClick={handleToggleTheme}
                             className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                         >
                             {theme === 'dark' ? (

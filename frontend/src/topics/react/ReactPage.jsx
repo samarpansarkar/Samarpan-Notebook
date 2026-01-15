@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import TopicLayout from '@/components/layout/TopicLayout';
-import { useTopics } from '@/context/TopicContext';
+import { selectTopicsBySubject } from '@/store/slices/topicSlice';
 
 const ReactPage = () => {
-    const { getTopicsBySubject, loading, error } = useTopics();
-    const sections = getTopicsBySubject('react');
+    const loading = useSelector(state => state.topics.status === 'loading');
+    const sections = useSelector(state => selectTopicsBySubject(state, 'react'));
 
     if (loading) return <div>Loading content...</div>;
 

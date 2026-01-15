@@ -1,7 +1,9 @@
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import MainLayout from '@/components/layout/MainLayout';
-import { useSubjects } from '@/context/SubjectContext';
+import { fetchSubjects, selectAllSubjects } from '@/store/slices/subjectSlice';
+import { fetchTopicsAndTheories } from '@/store/slices/topicSlice';
 
 const HomePage = lazy(() => import('@/pages/HomePage'));
 const SubjectPage = lazy(() => import('@/pages/SubjectPage'));
@@ -23,7 +25,13 @@ const PageLoader = () => (
 );
 
 const AppRoutes = () => {
-    const { subjects } = useSubjects();
+    const dispatch = useDispatch();
+    const subjects = useSelector(selectAllSubjects);
+
+    useEffect(() => {
+        dispatch(fetchSubjects());
+        dispatch(fetchTopicsAndTheories());
+    }, [dispatch]);
 
     return (
         <Routes>

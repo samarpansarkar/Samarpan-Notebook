@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search as SearchIcon, X, Loader2, FileText } from 'lucide-react';
 import api from '@/api/client';
-import { useSubjects } from '@/context/SubjectContext';
+import { useSelector } from 'react-redux';
+import { selectAllSubjects } from '@/store/slices/subjectSlice';
 
 const Search = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -13,7 +14,7 @@ const Search = () => {
     const [selectedIndex, setSelectedIndex] = useState(-1);
 
     const navigate = useNavigate();
-    const { subjects } = useSubjects();
+    const subjects = useSelector(selectAllSubjects);
     const searchRef = useRef(null);
     const inputRef = useRef(null);
 
@@ -172,7 +173,7 @@ const Search = () => {
                                 onClick={() => handleSelect(theory)}
                             >
                                 <div className="flex items-start">
-                                    <div className="flex-shrink-0 pt-0.5">
+                                    <div className="shrink-0 pt-0.5">
                                         <FileText className={`h-5 w-5 ${selectedIndex === index ? 'text-indigo-500' : 'text-gray-400'}`} />
                                     </div>
                                     <div className="ml-3 font-medium">

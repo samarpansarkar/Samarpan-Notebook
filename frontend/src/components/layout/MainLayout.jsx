@@ -1,15 +1,20 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import { useState, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import Header from '@/components/layout/Header';
 import Sidebar from '@/components/layout/Sidebar';
-import { useTopics } from '@/context/TopicContext';
-import { useSubjects } from '@/context/SubjectContext';
+import { selectTopicsBySubject } from '@/store/slices/topicSlice';
+import { selectAllSubjects } from '@/store/slices/subjectSlice';
 
 const MainLayout = () => {
     const location = useLocation();
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const { getTopicsBySubject } = useTopics();
-    const { subjects } = useSubjects();
+    const subjects = useSelector(selectAllSubjects);
+    // Note: getTopicsBySubject was a function in Context. In Redux, we use a selector.
+    // However, the selector needs the state AND the subjectKey.
+    // We will use useSelector with the state inside the useMemo or pass the state to the selector function.
+    const fullState = useSelector(state => state); // Get full state to pass to parameterized selector
+
 
     const currentSubject = useMemo(() => {
         const path = location.pathname;
@@ -29,7 +34,7 @@ const MainLayout = () => {
             return {
                 title: currentSubject.title || (currentSubject.name + ' Concepts'),
                 basePath: currentSubject.path,
-                sections: getTopicsBySubject(subjectKey)
+                sections: selectTopicsBySubject(fullState, subjectKey)
             };
         }
 
@@ -38,7 +43,7 @@ const MainLayout = () => {
             basePath: '',
             sections: []
         };
-    }, [currentSubject, getTopicsBySubject]);
+    }, [currentSubject, fullState]);
 
     return (
         <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-200">
