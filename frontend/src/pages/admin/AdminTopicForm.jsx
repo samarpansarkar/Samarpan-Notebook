@@ -14,6 +14,7 @@ const AdminTopicForm = () => {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [availableTopics, setAvailableTopics] = useState([]);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -21,8 +22,22 @@ const AdminTopicForm = () => {
         subject: '',
         icon: 'Folder',
         color: 'from-blue-500 to-cyan-500',
+        parentTopic: null,
         order: 0
     });
+
+    // Fetch available topics for parent selection
+    useEffect(() => {
+        const fetchTopics = async () => {
+            try {
+                const { data } = await api.get('/topics');
+                setAvailableTopics(data);
+            } catch (err) {
+                console.error('Failed to fetch topics', err);
+            }
+        };
+        fetchTopics();
+    }, []);
 
     useEffect(() => {
         if (isEdit) {
@@ -156,6 +171,27 @@ const AdminTopicForm = () => {
                                 Pick an icon from <a href="https://lucide.dev/icons" target="_blank" rel="noreferrer" className="text-indigo-400 hover:underline">lucide.dev</a>
                             </p>
                         </div>
+                    </div>
+                    <div>
+                        <label className="block text-sm text-gray-400 mb-1">Parent Topic (Optional)</label>
+                        <select
+                            name="parentTopic"
+                            value={formData.parentTopic || ''}
+                            onChange={handleChange}
+                            className="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-indigo-500 focus:outline-none"
+                        >
+                            <option value="">None (Top-level topic)</option>
+                            {availableTopics
+                                .filter(t => t.subject === formData.subject && t.topicId !== formData.topicId)
+                                .map(topic => (
+                                    <option key={topic._id} value={topic.topicId}>
+                                        {topic.name}
+                                    </option>
+                                ))}
+                        </select>
+                        <p className="text-xs text-gray-500 mt-1">
+                            Select a parent to create a subtopic (e.g., "State Hooks" under "Hooks")
+                        </p>
                     </div>
 
                     <div>

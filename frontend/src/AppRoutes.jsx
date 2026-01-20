@@ -10,11 +10,12 @@ const SubjectPage = lazy(() => import('@/pages/SubjectPage'));
 const AdminLogin = lazy(() => import('@/pages/admin/AdminLogin'));
 const AdminLayout = lazy(() => import('@/components/admin/AdminLayout'));
 const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard'));
-const TheoryPracticalForm = lazy(() => import('@/pages/admin/TheoryPracticalForm'));
+const TheoryPracticalForm = lazy(() => import('@/pages/admin/SimplifiedTheoryForm'));
 const AdminTopicForm = lazy(() => import('@/pages/admin/AdminTopicForm'));
 const AdminTopics = lazy(() => import('@/pages/admin/AdminTopics'));
 const AdminSubjects = lazy(() => import('@/pages/admin/AdminSubjects'));
 const AdminTheories = lazy(() => import('@/pages/admin/AdminTheories'));
+const AdminKeywords = lazy(() => import('@/pages/admin/AdminKeywords'));
 const SubjectForm = lazy(() => import('@/pages/admin/SubjectForm'));
 const CompilerPage = lazy(() => import('@/compiler/pages/CompilerPage'));
 
@@ -94,6 +95,11 @@ const AppRoutes = () => {
                 <Route path="topic/edit/:id" element={
                     <Suspense fallback={<PageLoader />}>
                         <TheoryPracticalForm />
+                    </Suspense>
+                } />
+                <Route path="keywords" element={
+                    <Suspense fallback={<PageLoader />}>
+                        <AdminKeywords />
                     </Suspense>
                 } />
             </Route>

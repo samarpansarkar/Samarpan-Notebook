@@ -4,8 +4,10 @@ import api from '@/api/client';
 import { Save, ArrowLeft, Plus, Trash } from 'lucide-react';
 import { iconRegistry } from '@/utils/componentRegistry';
 import { useDispatch, useSelector } from 'react-redux';
+import KeywordInput from '@/components/admin/KeywordInput';
 import { fetchTopicsAndTheories } from '@/store/slices/topicSlice';
 import { selectAllSubjects } from '@/store/slices/subjectSlice';
+import ContentBlockEditor from '@/components/admin/ContentBlockEditor';
 
 const TheoryPracticalForm = () => {
     const { id } = useParams();
@@ -25,11 +27,12 @@ const TheoryPracticalForm = () => {
         subject: 'react',
         icon: 'Box',
         description: '',
-        // componentKey: '', // Deprecated
         liveCode: '',
         order: 0,
         sectionOrder: 0,
-        theory: {
+        keywords: [],
+        contentBlocks: [], // New dynamic content system
+        theory: { // Legacy format - kept for backward compatibility
             overview: '',
             definition: '',
             syntax: '',
@@ -150,6 +153,53 @@ const TheoryPracticalForm = () => {
                     [field]: newArray
                 }
             };
+        });
+    };
+
+    // Content block handlers
+    const addContentBlock = (type) => {
+        const newBlock = {
+            type,
+            order: formData.contentBlocks.length,
+            ...(type === 'heading' && { level: 2, content: '' }),
+            ...(type === 'paragraph' && { content: '' }),
+            ...(type === 'code' && { language: 'javascript', content: '' }),
+            ...(type === 'list' && { items: [''] }),
+            ...(type === 'alert' && { alertType: 'info', content: '' }),
+        };
+        setFormData(prev => ({
+            ...prev,
+            contentBlocks: [...prev.contentBlocks, newBlock]
+        }));
+    };
+
+    const updateContentBlock = (index, updatedBlock) => {
+        setFormData(prev => {
+            const newBlocks = [...prev.contentBlocks];
+            newBlocks[index] = { ...updatedBlock, order: index };
+            return { ...prev, contentBlocks: newBlocks };
+        });
+    };
+
+    const deleteContentBlock = (index) => {
+        setFormData(prev => ({
+            ...prev,
+            contentBlocks: prev.contentBlocks.filter((_, i) => i !== index)
+        }));
+    };
+
+    const moveContentBlock = (index, direction) => {
+        const newIndex = direction === 'up' ? index - 1 : index + 1;
+        if (newIndex < 0 || newIndex >= formData.contentBlocks.length) return;
+
+        setFormData(prev => {
+            const newBlocks = [...prev.contentBlocks];
+            [newBlocks[index], newBlocks[newIndex]] = [newBlocks[newIndex], newBlocks[index]];
+            // Update order values
+            newBlocks.forEach((block, i) => {
+                block.order = i;
+            });
+            return { ...prev, contentBlocks: newBlocks };
         });
     };
 
@@ -351,10 +401,74 @@ const TheoryPracticalForm = () => {
                             className="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white h-20"
                         />
                     </div>
+
+                    <KeywordInput
+                        value={formData.keywords}
+                        onChange={(keywords) => setFormData(prev => ({ ...prev, keywords }))}
+                    />
                 </div>
 
                 <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-indigo-400 border-b border-gray-700 pb-2">Theory Content</h3>
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-semibold text-indigo-400 border-b border-gray-700 pb-2 flex-1">Dynamic Content Blocks</h3>
+                        <div className="flex gap-2">
+                            <select
+                                id="blockTypeSelector"
+                                className="bg-gray-700 border border-gray-600 rounded px-3 py-1 text-white text-sm"
+                                defaultValue=""
+                            >
+                                <option value="" disabled>Select block type...</option>
+                                <option value="heading">Heading</option>
+                                <option value="paragraph">Paragraph</option>
+                                <option value="code">Code Block</option>
+                                <option value="list">List</option>
+                                <option value="alert">Alert</option>
+                                <option value="divider">Divider</option>
+                            </select>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    const selector = document.getElementById('blockTypeSelector');
+                                    if (selector.value) {
+                                        addContentBlock(selector.value);
+                                        selector.value = '';
+                                    }
+                                }}
+                                className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1 rounded text-sm flex items-center gap-1"
+                            >
+                                <Plus size={16} /> Add Block
+                            </button>
+                        </div>
+                    </div>
+
+                    {formData.contentBlocks.length === 0 ? (
+                        <div className="bg-gray-700/50 border border-gray-600 rounded-lg p-8 text-center">
+                            <p className="text-gray-400">No content blocks yet. Add your first block above!</p>
+                            <p className="text-gray-500 text-sm mt-2">Build your content with headings, paragraphs, code blocks, lists, and more.</p>
+                        </div>
+                    ) : (
+                        <div className="space-y-4">
+                            {formData.contentBlocks.map((block, index) => (
+                                <ContentBlockEditor
+                                    key={index}
+                                    block={block}
+                                    onChange={(updated) => updateContentBlock(index, updated)}
+                                    onDelete={() => deleteContentBlock(index)}
+                                    onMoveUp={() => moveContentBlock(index, 'up')}
+                                    onMoveDown={() => moveContentBlock(index, 'down')}
+                                    canMoveUp={index > 0}
+                                    canMoveDown={index < formData.contentBlocks.length - 1}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* Legacy Theory Content - Collapsible for backward compatibility */}
+                <details className="space-y-4">
+                    <summary className="text-lg font-semibold text-gray-500 cursor-pointer hover:text-gray-400 pb-2">
+                        Legacy Theory Fields (Optional - for backward compatibility)
+                    </summary>
 
                     <div className="space-y-4">
                         {['overview', 'definition', 'syntax', 'realLifeScenario', 'deepDive'].map(field => (
@@ -400,7 +514,7 @@ const TheoryPracticalForm = () => {
                         </div>
                     ))}
 
-                </div>
+                </details>
 
                 <div className="pt-4 border-t border-gray-700 flex justify-end">
                     <button

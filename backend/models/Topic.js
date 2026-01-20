@@ -23,6 +23,10 @@ const TopicSchema = new mongoose.Schema(
       type: String,
       default: "from-blue-500 to-cyan-500", // Default gradient
     },
+    parentTopic: {
+      type: String, // References another topic's topicId
+      default: null,
+    },
     order: {
       type: Number,
       default: 0,

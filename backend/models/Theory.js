@@ -23,13 +23,13 @@ const TheorySchema = new mongoose.Schema(
     },
     section: {
       type: String, // e.g., 'hooks', 'concepts' - top level grouping
-      required: true,
-      default: "hooks",
+      required: false, // Made optional for simplified form
+      default: "general",
     },
     subject: {
       type: String, // e.g., 'react', 'js' - matches Subject path or id
-      required: true,
-      default: "react",
+      required: false, // Made optional for simplified form
+      default: "general",
     },
     description: {
       type: String,
@@ -48,6 +48,40 @@ const TheorySchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    keywords: {
+      type: [String],
+      default: [],
+      lowercase: true,
+      trim: true,
+    },
+    // Rich text content from WYSIWYG editor (HTML format)
+    richContent: {
+      type: String,
+      default: "",
+    },
+    // New flexible content blocks system
+    contentBlocks: [
+      {
+        type: {
+          type: String,
+          enum: ["heading", "paragraph", "code", "list", "alert", "divider"],
+          required: true,
+        },
+        level: Number, // For headings (1-6)
+        content: String, // For heading, paragraph, code, alert
+        language: String, // For code blocks (e.g., 'javascript', 'python')
+        items: [String], // For lists
+        alertType: {
+          type: String,
+          enum: ["info", "warning", "success", "error"],
+        }, // For alerts
+        order: {
+          type: Number,
+          default: 0,
+        },
+      },
+    ],
+    // Legacy theory object - kept for backward compatibility
     theory: {
       overview: String,
       definition: String,

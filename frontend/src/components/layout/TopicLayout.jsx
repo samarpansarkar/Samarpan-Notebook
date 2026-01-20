@@ -1,7 +1,10 @@
 import { useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { BookOpen, Play, Sparkles } from 'lucide-react';
+import { BookOpen, Play, Sparkles, Tag } from 'lucide-react';
 import LiveRenderer from '@/components/LiveRenderer';
+import RelatedTheories from '@/components/RelatedTheories';
+import ContentBlockRenderer from '@/components/content/ContentBlockRenderer';
+import DOMPurify from 'dompurify';
 
 const TopicLayout = ({ title, sections, basePath }) => {
     const { topicId } = useParams();
@@ -71,255 +74,314 @@ const TopicLayout = ({ title, sections, basePath }) => {
                                 className="p-6 space-y-6 overflow-auto max-h-[800px] slide-in-left"
                                 style={{ backgroundColor: 'var(--color-surface)' }}
                             >
-                                {/* Overview */}
-                                <div className="scale-in">
-                                    <h3
-                                        className="text-lg font-bold mb-3 flex items-center gap-2 pb-2 border-b"
-                                        style={{
-                                            color: 'var(--color-text-primary)',
-                                            borderColor: 'var(--color-border)'
+                                {/* Check for richContent first (WYSIWYG editor) */}
+                                {activeContent.richContent ? (
+                                    <div
+                                        className="prose prose-invert max-w-none rich-content"
+                                        dangerouslySetInnerHTML={{
+                                            __html: DOMPurify.sanitize(activeContent.richContent)
                                         }}
-                                    >
-                                        <span>📖</span> Overview
-                                    </h3>
-                                    <p
-                                        className="leading-relaxed"
                                         style={{ color: 'var(--color-text-secondary)' }}
-                                    >
-                                        {activeContent.theory.overview}
-                                    </p>
-                                </div>
-
-                                {/* Definition */}
-                                {activeContent.theory.definition && (
-                                    <div className="scale-in" style={{ animationDelay: '0.1s' }}>
-                                        <h3
-                                            className="text-lg font-bold mb-3 flex items-center gap-2 pb-2 border-b"
-                                            style={{
-                                                color: 'var(--color-text-primary)',
-                                                borderColor: 'var(--color-border)'
-                                            }}
-                                        >
-                                            <span>📚</span> Definition
-                                        </h3>
-                                        <div
-                                            className="border-l-4 p-4 rounded-r-lg"
-                                            style={{
-                                                backgroundColor: 'var(--color-bg-tertiary)',
-                                                borderColor: 'var(--color-primary)',
-                                                color: 'var(--color-text-primary)'
-                                            }}
-                                        >
-                                            {activeContent.theory.definition}
-                                        </div>
+                                    />
+                                ) : activeContent.contentBlocks && activeContent.contentBlocks.length > 0 ? (
+                                    <div className="content-blocks-container">
+                                        <ContentBlockRenderer blocks={activeContent.contentBlocks} />
                                     </div>
-                                )}
-
-                                {/* Syntax */}
-                                <div className="scale-in" style={{ animationDelay: '0.2s' }}>
-                                    <h3
-                                        className="text-lg font-bold mb-3 flex items-center gap-2 pb-2 border-b"
-                                        style={{
-                                            color: 'var(--color-text-primary)',
-                                            borderColor: 'var(--color-border)'
-                                        }}
-                                    >
-                                        <span>💻</span> Syntax
-                                    </h3>
-                                    <pre className="bg-slate-900 text-slate-50 p-4 rounded-xl text-sm overflow-x-auto font-mono border border-slate-700 shadow-inner">
-                                        <code>{activeContent.theory.syntax}</code>
-                                    </pre>
-                                </div>
-
-                                {/* Real-life Scenario */}
-                                {activeContent.theory.realLifeScenario && (
-                                    <div className="scale-in" style={{ animationDelay: '0.3s' }}>
-                                        <h3
-                                            className="text-lg font-bold mb-3 flex items-center gap-2 pb-2 border-b"
-                                            style={{
-                                                color: 'var(--color-text-primary)',
-                                                borderColor: 'var(--color-border)'
-                                            }}
-                                        >
-                                            <span>🌍</span> Real-life Scenario
-                                        </h3>
-                                        <div
-                                            className="p-4 rounded-xl border leading-relaxed"
-                                            style={{
-                                                backgroundColor: 'var(--color-bg-secondary)',
-                                                borderColor: 'var(--color-secondary)',
-                                                color: 'var(--color-text-secondary)'
-                                            }}
-                                        >
-                                            {activeContent.theory.realLifeScenario}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* Pros & Cons */}
-                                {(activeContent.theory.pros || activeContent.theory.cons) && (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {activeContent.theory.pros && (
-                                            <div
-                                                className="p-4 rounded-xl border hover-lift-shadow"
+                                ) : (
+                                    /* Legacy theory format */
+                                    <>
+                                        {/* Overview */}
+                                        <div className="scale-in">
+                                            <h3
+                                                className="text-lg font-bold mb-3 flex items-center gap-2 pb-2 border-b"
                                                 style={{
-                                                    backgroundColor: 'var(--color-bg-secondary)',
-                                                    borderColor: 'var(--color-success)'
+                                                    color: 'var(--color-text-primary)',
+                                                    borderColor: 'var(--color-border)'
                                                 }}
                                             >
-                                                <h4
-                                                    className="font-bold mb-2 flex items-center gap-2"
-                                                    style={{ color: 'var(--color-success)' }}
-                                                >
-                                                    👍 Pros
-                                                </h4>
-                                                <ul className="space-y-1">
-                                                    {activeContent.theory.pros.map((pro, idx) => (
-                                                        <li
-                                                            key={idx}
-                                                            className="text-sm flex gap-2"
-                                                            style={{ color: 'var(--color-text-secondary)' }}
-                                                        >
-                                                            <span style={{ color: 'var(--color-success)' }}>•</span>
-                                                            {pro}
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            </div>
-                                        )}
-                                        {activeContent.theory.cons && (
-                                            <div
-                                                className="p-4 rounded-xl border hover-lift-shadow"
-                                                style={{
-                                                    backgroundColor: 'var(--color-bg-secondary)',
-                                                    borderColor: 'var(--color-error)'
-                                                }}
+                                                <span>📖</span> Overview
+                                            </h3>
+                                            <p
+                                                className="leading-relaxed"
+                                                style={{ color: 'var(--color-text-secondary)' }}
                                             >
-                                                <h4
-                                                    className="font-bold mb-2 flex items-center gap-2"
-                                                    style={{ color: 'var(--color-error)' }}
-                                                >
-                                                    👎 Cons
-                                                </h4>
-                                                <ul className="space-y-1">
-                                                    {activeContent.theory.cons.map((con, idx) => (
-                                                        <li
-                                                            key={idx}
-                                                            className="text-sm flex gap-2"
-                                                            style={{ color: 'var(--color-text-secondary)' }}
-                                                        >
-                                                            <span style={{ color: 'var(--color-error)' }}>•</span>
-                                                            {con}
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-
-                                {/* Details & Tips */}
-                                <div>
-                                    <h3
-                                        className="text-lg font-bold mb-4 pb-2 border-b"
-                                        style={{
-                                            color: 'var(--color-text-primary)',
-                                            borderColor: 'var(--color-border)'
-                                        }}
-                                    >
-                                        🔍 Details & Tips
-                                    </h3>
-
-                                    {activeContent.theory.whenToUse && (
-                                        <div className="mb-6">
-                                            <h4
-                                                className="font-semibold mb-2"
-                                                style={{ color: 'var(--color-text-primary)' }}
-                                            >
-                                                When to Use:
-                                            </h4>
-                                            <ul className="space-y-2">
-                                                {activeContent.theory.whenToUse.map((item, idx) => (
-                                                    <li
-                                                        key={idx}
-                                                        className="flex gap-2 items-start"
-                                                        style={{ color: 'var(--color-text-secondary)' }}
-                                                    >
-                                                        <span style={{ color: 'var(--color-primary)' }} className="mt-1">•</span>
-                                                        <span>{item}</span>
-                                                    </li>
-                                                ))}
-                                            </ul>
+                                                {activeContent.theory.overview}
+                                            </p>
                                         </div>
-                                    )}
 
-                                    {activeContent.theory.tips && (
-                                        <div className="space-y-2 mb-6">
-                                            {activeContent.theory.tips.map((tip, idx) => (
+                                        {/* Definition */}
+                                        {activeContent.theory.definition && (
+                                            <div className="scale-in" style={{ animationDelay: '0.1s' }}>
+                                                <h3
+                                                    className="text-lg font-bold mb-3 flex items-center gap-2 pb-2 border-b"
+                                                    style={{
+                                                        color: 'var(--color-text-primary)',
+                                                        borderColor: 'var(--color-border)'
+                                                    }}
+                                                >
+                                                    <span>📚</span> Definition
+                                                </h3>
                                                 <div
-                                                    key={idx}
-                                                    className="border-l-4 p-3 rounded-r-lg text-sm flex gap-3 hover-bounce"
+                                                    className="border-l-4 p-4 rounded-r-lg"
                                                     style={{
                                                         backgroundColor: 'var(--color-bg-tertiary)',
-                                                        borderColor: 'var(--color-warning)',
+                                                        borderColor: 'var(--color-primary)',
                                                         color: 'var(--color-text-primary)'
                                                     }}
                                                 >
-                                                    <span style={{ color: 'var(--color-warning)' }} className="font-bold">★</span>
-                                                    <span>{tip}</span>
+                                                    {activeContent.theory.definition}
                                                 </div>
-                                            ))}
-                                        </div>
-                                    )}
+                                            </div>
+                                        )}
 
-                                    {activeContent.theory.deepDive && (
-                                        <div className="mb-6">
-                                            <h4
-                                                className="font-semibold mb-2"
-                                                style={{ color: 'var(--color-text-primary)' }}
-                                            >
-                                                Deep Dive:
-                                            </h4>
-                                            <div
-                                                className="text-sm leading-relaxed p-4 rounded-xl border"
+                                        {/* Syntax */}
+                                        <div className="scale-in" style={{ animationDelay: '0.2s' }}>
+                                            <h3
+                                                className="text-lg font-bold mb-3 flex items-center gap-2 pb-2 border-b"
                                                 style={{
-                                                    backgroundColor: 'var(--color-bg-secondary)',
-                                                    borderColor: 'var(--color-info)',
-                                                    color: 'var(--color-text-secondary)'
+                                                    color: 'var(--color-text-primary)',
+                                                    borderColor: 'var(--color-border)'
                                                 }}
                                             >
-                                                {activeContent.theory.deepDive}
-                                            </div>
+                                                <span>💻</span> Syntax
+                                            </h3>
+                                            <pre className="bg-slate-900 text-slate-50 p-4 rounded-xl text-sm overflow-x-auto font-mono border border-slate-700 shadow-inner">
+                                                <code>{activeContent.theory.syntax}</code>
+                                            </pre>
                                         </div>
-                                    )}
 
-                                    {activeContent.theory.commonPitfalls && (
-                                        <div>
-                                            <h4
-                                                className="font-semibold mb-2"
-                                                style={{ color: 'var(--color-text-primary)' }}
-                                            >
-                                                Common Pitfalls:
-                                            </h4>
-                                            <ul className="space-y-2">
-                                                {activeContent.theory.commonPitfalls.map((pitfall, idx) => (
-                                                    <li
-                                                        key={idx}
-                                                        className="border-l-4 p-3 rounded-r-lg text-sm flex gap-3 shake"
+                                        {/* Real-life Scenario */}
+                                        {activeContent.theory.realLifeScenario && (
+                                            <div className="scale-in" style={{ animationDelay: '0.3s' }}>
+                                                <h3
+                                                    className="text-lg font-bold mb-3 flex items-center gap-2 pb-2 border-b"
+                                                    style={{
+                                                        color: 'var(--color-text-primary)',
+                                                        borderColor: 'var(--color-border)'
+                                                    }}
+                                                >
+                                                    <span>🌍</span> Real-life Scenario
+                                                </h3>
+                                                <div
+                                                    className="p-4 rounded-xl border leading-relaxed"
+                                                    style={{
+                                                        backgroundColor: 'var(--color-bg-secondary)',
+                                                        borderColor: 'var(--color-secondary)',
+                                                        color: 'var(--color-text-secondary)'
+                                                    }}
+                                                >
+                                                    {activeContent.theory.realLifeScenario}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Pros & Cons */}
+                                        {(activeContent.theory.pros || activeContent.theory.cons) && (
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                {activeContent.theory.pros && (
+                                                    <div
+                                                        className="p-4 rounded-xl border hover-lift-shadow"
                                                         style={{
-                                                            backgroundColor: 'var(--color-bg-tertiary)',
-                                                            borderColor: 'var(--color-error)',
-                                                            color: 'var(--color-text-primary)'
+                                                            backgroundColor: 'var(--color-bg-secondary)',
+                                                            borderColor: 'var(--color-success)'
                                                         }}
                                                     >
-                                                        <span style={{ color: 'var(--color-error)' }} className="font-bold">!</span>
-                                                        <span>{pitfall}</span>
-                                                    </li>
-                                                ))}
-                                            </ul>
+                                                        <h4
+                                                            className="font-bold mb-2 flex items-center gap-2"
+                                                            style={{ color: 'var(--color-success)' }}
+                                                        >
+                                                            👍 Pros
+                                                        </h4>
+                                                        <ul className="space-y-1">
+                                                            {activeContent.theory.pros.map((pro, idx) => (
+                                                                <li
+                                                                    key={idx}
+                                                                    className="text-sm flex gap-2"
+                                                                    style={{ color: 'var(--color-text-secondary)' }}
+                                                                >
+                                                                    <span style={{ color: 'var(--color-success)' }}>•</span>
+                                                                    {pro}
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    </div>
+                                                )}
+                                                {activeContent.theory.cons && (
+                                                    <div
+                                                        className="p-4 rounded-xl border hover-lift-shadow"
+                                                        style={{
+                                                            backgroundColor: 'var(--color-bg-secondary)',
+                                                            borderColor: 'var(--color-error)'
+                                                        }}
+                                                    >
+                                                        <h4
+                                                            className="font-bold mb-2 flex items-center gap-2"
+                                                            style={{ color: 'var(--color-error)' }}
+                                                        >
+                                                            👎 Cons
+                                                        </h4>
+                                                        <ul className="space-y-1">
+                                                            {activeContent.theory.cons.map((con, idx) => (
+                                                                <li
+                                                                    key={idx}
+                                                                    className="text-sm flex gap-2"
+                                                                    style={{ color: 'var(--color-text-secondary)' }}
+                                                                >
+                                                                    <span style={{ color: 'var(--color-error)' }}>•</span>
+                                                                    {con}
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {/* Details & Tips */}
+                                        <div>
+                                            <h3
+                                                className="text-lg font-bold mb-4 pb-2 border-b"
+                                                style={{
+                                                    color: 'var(--color-text-primary)',
+                                                    borderColor: 'var(--color-border)'
+                                                }}
+                                            >
+                                                🔍 Details & Tips
+                                            </h3>
+
+                                            {activeContent.theory.whenToUse && (
+                                                <div className="mb-6">
+                                                    <h4
+                                                        className="font-semibold mb-2"
+                                                        style={{ color: 'var(--color-text-primary)' }}
+                                                    >
+                                                        When to Use:
+                                                    </h4>
+                                                    <ul className="space-y-2">
+                                                        {activeContent.theory.whenToUse.map((item, idx) => (
+                                                            <li
+                                                                key={idx}
+                                                                className="flex gap-2 items-start"
+                                                                style={{ color: 'var(--color-text-secondary)' }}
+                                                            >
+                                                                <span style={{ color: 'var(--color-primary)' }} className="mt-1">•</span>
+                                                                <span>{item}</span>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
+
+                                            {activeContent.theory.tips && (
+                                                <div className="space-y-2 mb-6">
+                                                    {activeContent.theory.tips.map((tip, idx) => (
+                                                        <div
+                                                            key={idx}
+                                                            className="border-l-4 p-3 rounded-r-lg text-sm flex gap-3 hover-bounce"
+                                                            style={{
+                                                                backgroundColor: 'var(--color-bg-tertiary)',
+                                                                borderColor: 'var(--color-warning)',
+                                                                color: 'var(--color-text-primary)'
+                                                            }}
+                                                        >
+                                                            <span style={{ color: 'var(--color-warning)' }} className="font-bold">★</span>
+                                                            <span>{tip}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            {activeContent.theory.deepDive && (
+                                                <div className="mb-6">
+                                                    <h4
+                                                        className="font-semibold mb-2"
+                                                        style={{ color: 'var(--color-text-primary)' }}
+                                                    >
+                                                        Deep Dive:
+                                                    </h4>
+                                                    <div
+                                                        className="text-sm leading-relaxed p-4 rounded-xl border"
+                                                        style={{
+                                                            backgroundColor: 'var(--color-bg-secondary)',
+                                                            borderColor: 'var(--color-info)',
+                                                            color: 'var(--color-text-secondary)'
+                                                        }}
+                                                    >
+                                                        {activeContent.theory.deepDive}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {activeContent.theory.commonPitfalls && (
+                                                <div>
+                                                    <h4
+                                                        className="font-semibold mb-2"
+                                                        style={{ color: 'var(--color-text-primary)' }}
+                                                    >
+                                                        Common Pitfalls:
+                                                    </h4>
+                                                    <ul className="space-y-2">
+                                                        {activeContent.theory.commonPitfalls.map((pitfall, idx) => (
+                                                            <li
+                                                                key={idx}
+                                                                className="border-l-4 p-3 rounded-r-lg text-sm flex gap-3 shake"
+                                                                style={{
+                                                                    backgroundColor: 'var(--color-bg-tertiary)',
+                                                                    borderColor: 'var(--color-error)',
+                                                                    color: 'var(--color-text-primary)'
+                                                                }}
+                                                            >
+                                                                <span style={{ color: 'var(--color-error)' }} className="font-bold">!</span>
+                                                                <span>{pitfall}</span>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
                                         </div>
-                                    )}
-                                </div>
+                                    </>
+                                )}
+
+                                {/* Keywords Section - always show if available */}
+                                {activeContent.keywords && activeContent.keywords.length > 0 && (
+                                    <div className="scale-in" style={{ animationDelay: '0.7s' }}>
+                                        <h3
+                                            className="text-lg font-bold mb-3 flex items-center gap-2 pb-2 border-b"
+                                            style={{
+                                                color: 'var(--color-text-primary)',
+                                                borderColor: 'var(--color-border)'
+                                            }}
+                                        >
+                                            <Tag className="w-5 h-5" style={{ color: 'var(--color-primary)' }} />
+                                            Keywords
+                                        </h3>
+                                        <div className="flex flex-wrap gap-2">
+                                            {activeContent.keywords.map((keyword, index) => (
+                                                <span
+                                                    key={index}
+                                                    className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium transition-all hover-bounce cursor-pointer"
+                                                    style={{
+                                                        backgroundColor: 'var(--color-bg-tertiary)',
+                                                        color: 'var(--color-primary)',
+                                                        border: '1px solid var(--color-border)'
+                                                    }}
+                                                >
+                                                    #{keyword}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Related Theories */}
+                                {activeContent.keywords && activeContent.keywords.length > 0 && (
+                                    <div className="scale-in" style={{ animationDelay: '0.8s' }}>
+                                        <RelatedTheories
+                                            topicId={activeContent.id}
+                                            keywords={activeContent.keywords}
+                                        />
+                                    </div>
+                                )}
                             </div>
                         )}
 

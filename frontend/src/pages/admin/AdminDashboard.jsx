@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '@/api/client';
-import { BookOpen, Layers, FileText, PlusCircle, ExternalLink, Activity } from 'lucide-react';
+import { BookOpen, Layers, FileText, PlusCircle, ExternalLink, Activity, Tag } from 'lucide-react';
 
 const StatCard = ({ title, count, icon: Icon, color, to }) => (
     <Link
@@ -124,6 +124,12 @@ const AdminDashboard = () => {
                         description="Visit the public facing application"
                         icon={ExternalLink}
                         to="/"
+                    />
+                    <QuickLink
+                        title="Manage Keywords"
+                        description="View and manage all content keywords"
+                        icon={Tag}
+                        to="/admin/keywords"
                     />
                 </div>
             </div>
