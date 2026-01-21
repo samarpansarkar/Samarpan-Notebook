@@ -7,6 +7,10 @@ import KeywordInput from '@/components/admin/KeywordInput';
 import { fetchTopicsAndTheories } from '@/store/slices/topicSlice';
 import { selectAllSubjects } from '@/store/slices/subjectSlice';
 import RichTextEditor from '@/components/admin/RichTextEditor';
+import AIGeneratorModal from '@/components/ai/AIGeneratorModal';
+import RegenerationOptions from '@/components/ai/RegenerationOptions';
+import { Sparkles, RefreshCw } from 'lucide-react';
+import { useToast } from '@/contexts/ToastContext';
 
 const SimplifiedTheoryForm = () => {
     const { id } = useParams();
@@ -14,16 +18,19 @@ const SimplifiedTheoryForm = () => {
     const dispatch = useDispatch();
     const subjects = useSelector(selectAllSubjects);
     const isEdit = !!id;
+    const toast = useToast();
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [showMetadata, setShowMetadata] = useState(false);
+    const [showAIModal, setShowAIModal] = useState(false);
+    const [showRegenerateModal, setShowRegenerateModal] = useState(false);
 
     const [formData, setFormData] = useState({
         topicId: '',
         title: '',
-        richContent: '', // Rich text editor content
-        // Optional metadata
+        richContent: '',
+
         level: 'beginner',
         section: '',
         subject: '',
@@ -33,6 +40,7 @@ const SimplifiedTheoryForm = () => {
         order: 0,
         sectionOrder: 0,
         keywords: [],
+        componentKey: '',
     });
 
     const [availableTopics, setAvailableTopics] = useState([]);
@@ -109,19 +117,104 @@ const SimplifiedTheoryForm = () => {
         }
     };
 
+    const handleAIGenerated = (aiData) => {
+        setFormData(prev => ({
+            ...prev,
+            title: aiData.title || prev.title,
+            richContent: aiData.richContent || prev.richContent,
+            description: aiData.description || prev.description,
+            keywords: aiData.keywords || prev.keywords,
+            level: aiData.level || prev.level,
+            liveCode: aiData.liveCode || prev.liveCode
+        }));
+
+
+        if (aiData.description || aiData.keywords?.length) {
+            setShowMetadata(true);
+        }
+    };
+
+    const handleRegenerateFields = async (fields) => {
+        if (!formData.title) {
+            toast.error('Please add a title first');
+            return;
+        }
+
+        try {
+            toast.info('Regenerating selected fields...');
+
+            const { data } = await api.post('/ai/generate', {
+                topic: formData.title,
+                subject: formData.subject,
+                additionalContext: `Only regenerate these fields: ${fields.join(', ')}`
+            });
+
+            if (data.success) {
+                // Only update selected fields
+                const updates = {};
+                fields.forEach(field => {
+                    if (data.data[field]) {
+                        updates[field] = data.data[field];
+                    }
+                });
+
+                setFormData(prev => ({ ...prev, ...updates }));
+                toast.success(`✨ Regenerated ${fields.length} field(s)`);
+            }
+        } catch (err) {
+            toast.error('Failed to regenerate fields');
+        }
+    };
+
     return (
         <div className="max-w-6xl mx-auto">
+            <AIGeneratorModal
+                isOpen={showAIModal}
+                onClose={() => setShowAIModal(false)}
+                onGenerate={handleAIGenerated}
+                initialSubject={formData.subject}
+            />
+
+            <RegenerationOptions
+                isOpen={showRegenerateModal}
+                onClose={() => setShowRegenerateModal(false)}
+                onRegenerate={handleRegenerateFields}
+            />
+
             <div className="flex items-center justify-between mb-8">
                 <h2 className="text-2xl font-bold text-white">
                     {isEdit ? `Edit Content: ${formData.title}` : 'Create New Content'}
                 </h2>
-                <button
-                    type="button"
-                    onClick={() => navigate('/admin/dashboard')}
-                    className="text-gray-400 hover:text-white flex items-center gap-2"
-                >
-                    <ArrowLeft size={18} /> Back
-                </button>
+
+                <div className="flex items-center gap-4">
+                    <button
+                        type="button"
+                        onClick={() => setShowAIModal(true)}
+                        className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-indigo-500/20 to-purple-500/20 hover:from-indigo-500/30 hover:to-purple-500/30 border border-indigo-500/50 text-indigo-300 rounded-lg transition-all hover:shadow-lg hover:shadow-indigo-500/10"
+                    >
+                        <Sparkles size={16} />
+                        Generate with AI
+                    </button>
+
+                    {formData.title && (
+                        <button
+                            type="button"
+                            onClick={() => setShowRegenerateModal(true)}
+                            className="flex items-center gap-2 px-4 py-2 bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/50 text-purple-300 rounded-lg transition-all"
+                        >
+                            <RefreshCw size={16} />
+                            Refine with AI
+                        </button>
+                    )}
+
+                    <button
+                        type="button"
+                        onClick={() => navigate('/admin/dashboard')}
+                        className="text-gray-400 hover:text-white flex items-center gap-2"
+                    >
+                        <ArrowLeft size={18} /> Back
+                    </button>
+                </div>
             </div>
 
             {error && (
@@ -131,14 +224,14 @@ const SimplifiedTheoryForm = () => {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Main Content Card */}
+
                 <div className="bg-gray-800 p-8 rounded-lg border border-gray-700 space-y-6">
                     <div className="space-y-4">
                         <h3 className="text-lg font-semibold text-indigo-400 border-b border-gray-700 pb-2">
                             Content Details
                         </h3>
 
-                        {/* Title */}
+
                         <div>
                             <label className="block text-sm text-gray-400 mb-1">
                                 Title <span className="text-red-400">*</span>
@@ -154,7 +247,7 @@ const SimplifiedTheoryForm = () => {
                             />
                         </div>
 
-                        {/* Content ID */}
+
                         <div>
                             <label className="text-sm text-gray-400 mb-1 group flex items-center gap-2">
                                 Content ID (URL Slug)
@@ -171,7 +264,7 @@ const SimplifiedTheoryForm = () => {
                         </div>
                     </div>
 
-                    {/* Rich Text Editor */}
+
                     <div>
                         <label className="block text-sm text-gray-400 mb-2">
                             Content <span className="text-red-400">*</span>
@@ -186,7 +279,7 @@ const SimplifiedTheoryForm = () => {
                     </div>
                 </div>
 
-                {/* Optional Metadata Section */}
+
                 <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
                     <button
                         type="button"
@@ -207,7 +300,7 @@ const SimplifiedTheoryForm = () => {
                     {showMetadata && (
                         <div className="p-6 border-t border-gray-700 space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {/* Subject */}
+
                                 <div>
                                     <label className="block text-sm text-gray-400 mb-1">Subject</label>
                                     <select
@@ -223,7 +316,7 @@ const SimplifiedTheoryForm = () => {
                                     </select>
                                 </div>
 
-                                {/* Topic */}
+
                                 <div>
                                     <label className="block text-sm text-gray-400 mb-1">Topic (Group)</label>
                                     <select
@@ -241,7 +334,7 @@ const SimplifiedTheoryForm = () => {
                                     </select>
                                 </div>
 
-                                {/* Level */}
+
                                 <div>
                                     <label className="block text-sm text-gray-400 mb-1">Difficulty Level</label>
                                     <select
@@ -257,7 +350,7 @@ const SimplifiedTheoryForm = () => {
                                     </select>
                                 </div>
 
-                                {/* Icon */}
+
                                 <div>
                                     <label className="block text-sm text-gray-400 mb-1">Icon (Lucide Name)</label>
                                     <input
@@ -270,7 +363,7 @@ const SimplifiedTheoryForm = () => {
                                     />
                                 </div>
 
-                                {/* Order */}
+
                                 <div>
                                     <label className="block text-sm text-gray-400 mb-1">Display Order</label>
                                     <input
@@ -283,7 +376,7 @@ const SimplifiedTheoryForm = () => {
                                     />
                                 </div>
 
-                                {/* Section Order */}
+
                                 <div>
                                     <label className="block text-sm text-gray-400 mb-1">Section Order</label>
                                     <input
@@ -297,7 +390,7 @@ const SimplifiedTheoryForm = () => {
                                 </div>
                             </div>
 
-                            {/* Short Description */}
+
                             <div>
                                 <label className="block text-sm text-gray-400 mb-1">Short Description</label>
                                 <textarea
@@ -309,13 +402,13 @@ const SimplifiedTheoryForm = () => {
                                 />
                             </div>
 
-                            {/* Keywords */}
+
                             <KeywordInput
                                 value={formData.keywords}
                                 onChange={(keywords) => setFormData(prev => ({ ...prev, keywords }))}
                             />
 
-                            {/* Live Code */}
+
                             <div>
                                 <label className="block text-sm text-gray-400 mb-1">Live Component Code (Optional)</label>
                                 <p className="text-xs text-gray-500 mb-2">
@@ -329,11 +422,27 @@ const SimplifiedTheoryForm = () => {
                                     placeholder="<div>Your JSX here</div>"
                                 />
                             </div>
+
+
+                            <div>
+                                <label className="block text-sm text-gray-400 mb-1">Internal Component Key (Advanced)</label>
+                                <p className="text-xs text-gray-500 mb-2">
+                                    Links to a pre-built React component in the codebase (e.g. 'UseStateDemo')
+                                </p>
+                                <input
+                                    type="text"
+                                    name="componentKey"
+                                    value={formData.componentKey || ''}
+                                    onChange={handleChange}
+                                    className="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white font-mono text-sm"
+                                    placeholder="e.g. UseStateDemo"
+                                />
+                            </div>
                         </div>
                     )}
                 </div>
 
-                {/* Submit Button */}
+
                 <div className="flex justify-end gap-4">
                     <button
                         type="button"

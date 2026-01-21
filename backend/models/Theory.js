@@ -81,23 +81,12 @@ const TheorySchema = new mongoose.Schema(
         },
       },
     ],
-    // Legacy theory object - kept for backward compatibility
-    theory: {
-      overview: String,
-      definition: String,
-      syntax: String,
-      realLifeScenario: String,
-      deepDive: String,
-      pros: [String],
-      cons: [String],
-      whenToUse: [String],
-      tips: [String],
-      commonPitfalls: [String],
-    },
+    // Legacy theory object - removed
+    // theory: { ... }
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 module.exports = mongoose.model("Theory", TheorySchema);

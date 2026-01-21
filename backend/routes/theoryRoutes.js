@@ -12,7 +12,7 @@ router.get("/", async (req, res) => {
     if (req.query.subject) {
       query.subject = req.query.subject;
     }
-    const topics = await Theory.find().sort({ order: 1 });
+    const topics = await Theory.find(query).sort({ order: 1 });
     res.json(topics);
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
@@ -157,7 +157,7 @@ router.get("/related/:id", async (req, res) => {
     const theoriesWithScore = relatedTheories.map((theory) => ({
       ...theory.toObject(),
       matchCount: theory.keywords.filter((k) =>
-        currentTheory.keywords.includes(k)
+        currentTheory.keywords.includes(k),
       ).length,
     }));
 

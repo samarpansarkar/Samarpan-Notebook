@@ -1,0 +1,49 @@
+import { createContext, useContext, useState } from 'react';
+import Toast from '@/components/ui/Toast';
+
+const ToastContext = createContext();
+
+export const useToast = () => {
+    const context = useContext(ToastContext);
+    if (!context) {
+        throw new Error('useToast must be used within ToastProvider');
+    }
+    return context;
+};
+
+export const ToastProvider = ({ children }) => {
+    const [toasts, setToasts] = useState([]);
+
+    const addToast = (message, type = 'info') => {
+        const id = Date.now();
+        setToasts(prev => [...prev, { id, message, type }]);
+        return id;
+    };
+
+    const removeToast = (id) => {
+        setToasts(prev => prev.filter(toast => toast.id !== id));
+    };
+
+    const toast = {
+        success: (message) => addToast(message, 'success'),
+        error: (message) => addToast(message, 'error'),
+        warning: (message) => addToast(message, 'warning'),
+        info: (message) => addToast(message, 'info'),
+    };
+
+    return (
+        <ToastContext.Provider value={toast}>
+            {children}
+            <div className="fixed top-4 right-4 z-9999 flex flex-col gap-2 max-w-md">
+                {toasts.map(({ id, message, type }) => (
+                    <Toast
+                        key={id}
+                        message={message}
+                        type={type}
+                        onClose={() => removeToast(id)}
+                    />
+                ))}
+            </div>
+        </ToastContext.Provider>
+    );
+};

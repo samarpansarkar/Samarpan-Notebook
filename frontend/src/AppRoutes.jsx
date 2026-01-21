@@ -123,11 +123,11 @@ const AppRoutes = () => {
                     }
                 />
 
-                {/* Dynamic Subject Routes */}
+
                 {subjects.map(subject => (
                     <Route
                         key={subject.path}
-                        path={subject.path.substring(1)} // remove leading slash for relative path
+                        path={subject.path.substring(1)}
                         element={
                             <Suspense fallback={<PageLoader />}>
                                 <SubjectPage subject={subject} />

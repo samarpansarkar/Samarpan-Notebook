@@ -24,6 +24,7 @@ app.use("/api/subjects", require("./routes/subjectRoutes"));
 app.use("/api/topics", require("./routes/topicRoutes"));
 app.use("/api/theory", require("./routes/theoryRoutes"));
 app.use("/api/keywords", require("./routes/keywordRoutes"));
+app.use("/api/ai", require("./ai/routes"));
 
 const PORT = process.env.PORT || 5000;
 

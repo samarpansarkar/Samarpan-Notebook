@@ -9,6 +9,7 @@ let token;
 beforeAll(async () => {
   // Authenticate as Admin
   await User.deleteMany({});
+  await Theory.deleteMany({});
   const user = await User.create({
     name: "Test Admin",
     email: "topicadmin@test.com",
